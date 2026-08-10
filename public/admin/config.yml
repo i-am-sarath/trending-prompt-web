@@ -1,10 +1,7 @@
 backend:
   name: github
-  repo: YOUR_GITHUB_USERNAME/trendingprompt   # <-- set this
+  repo: i-am-sarath/trending-prompt-web # <-- set this
   branch: main
-  # Only needed if you self-host the OAuth relay (see README section "Sveltia GitHub OAuth").
-  # Sveltia defaults to its own hosted authenticator; uncomment and point at your Worker to use yours:
-  # base_url: https://sveltia-auth.YOURNAME.workers.dev
 
 media_folder: "public/uploads"
 public_folder: "/uploads"
@@ -22,7 +19,16 @@ collections:
       - label: "Category"
         name: "category"
         widget: "select"
-        options: ["sci-fi", "portrait", "fantasy", "product", "logo", "anime", "general"]
+        options:
+          [
+            "sci-fi",
+            "portrait",
+            "fantasy",
+            "product",
+            "logo",
+            "anime",
+            "general",
+          ]
         default: "general"
       - { label: "Tool", name: "tool", widget: "string", required: false }
       - { label: "Date", name: "date", widget: "datetime" }
