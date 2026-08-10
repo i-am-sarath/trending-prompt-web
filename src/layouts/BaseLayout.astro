@@ -1,0 +1,54 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  url?: string;
+}
+
+const {
+  title = 'Trending Prompt — AI Prompt Gallery',
+  description = 'A gallery of trending AI prompts with images. Copy and reuse instantly.',
+  image = '/og-default.jpg',
+  url = Astro.url.href,
+} = Astro.props;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+
+    <!-- Open Graph / Twitter: makes shared links show the image -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={new URL(image, Astro.site)} />
+    <meta property="og:url" content={url} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={new URL(image, Astro.site)} />
+
+    <link rel="canonical" href={url} />
+    <link rel="icon" href="/favicon.svg" />
+
+    <!-- AdSense: uncomment and set client id AFTER approval -->
+    <!--
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
+    -->
+  </head>
+  <body>
+    <header class="site-header">
+      <a href="/" class="logo">trendingprompt</a>
+    </header>
+    <main><slot /></main>
+    <footer class="site-footer">
+      <p>© 2026 trendingprompt.org</p>
+    </footer>
+  </body>
+</html>

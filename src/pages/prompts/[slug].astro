@@ -1,0 +1,28 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CopyButton from '../../components/CopyButton.astro';
+
+export async function getStaticPaths() {
+  const prompts = await getCollection('prompts');
+  return prompts.map((p) => ({ params: { slug: p.slug }, props: { entry: p } }));
+}
+
+const { entry } = Astro.props;
+const { title, prompt, image, category, tool } = entry.data;
+---
+<BaseLayout title={`${title} — trendingprompt`} description={prompt.slice(0, 150)} image={image}>
+  <article class="prompt-page">
+    <img class="hero" src={image} alt={title} />
+    <h1>{title}</h1>
+    <div class="meta">
+      <a class="tag" href={`/category/${category}`}>{category}</a>
+      {tool && <span class="tag">{tool}</span>}
+    </div>
+    <pre class="prompt-text">{prompt}</pre>
+    <div class="actions">
+      <CopyButton text={prompt} />
+      <a class="download-btn" href={`data:text/plain;charset=utf-8,${encodeURIComponent(prompt)}`} download={`${entry.slug}.txt`}>Download .txt</a>
+    </div>
+  </article>
+</BaseLayout>
