@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import { getCollection } from 'astro:content';
 
 interface Props {
   title?: string;
@@ -9,11 +10,15 @@ interface Props {
 }
 
 const {
-  title = 'Trending Prompt — AI Prompt Gallery',
-  description = 'A gallery of trending AI prompts with images. Copy and reuse instantly.',
+  title = 'Trending Prompt — AI prompt gallery, one drop a day',
+  description = 'A daily gallery of AI image prompts. See the picture, take the prompt — copy or download it in one click.',
   image = '/og-default.jpg',
   url = Astro.url.href,
 } = Astro.props;
+
+const all = await getCollection('prompts');
+const categories = [...new Set(all.map((p) => p.data.category))].sort();
+const here = Astro.url.pathname.replace(/\/+$/, '') || '/';
 ---
 <!doctype html>
 <html lang="en">
@@ -22,6 +27,7 @@ const {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <meta name="theme-color" content="#efefeb" />
 
     <!-- Open Graph / Twitter: makes shared links show the image -->
     <meta property="og:type" content="website" />
@@ -37,18 +43,43 @@ const {
     <link rel="canonical" href={url} />
     <link rel="icon" href="/favicon.svg" />
 
+    <link rel="preload" href="/fonts/anybody-latin-1.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/instrument-sans-latin-1.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/dm-mono-latin-3.woff2" as="font" type="font/woff2" crossorigin />
+
     <!-- AdSense: uncomment and set client id AFTER approval -->
     <!--
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
     -->
   </head>
   <body>
-    <header class="site-header">
-      <a href="/" class="logo">trendingprompt</a>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="masthead">
+      <div class="shell masthead__inner">
+        <a href="/" class="wordmark">trendingprompt</a>
+        <nav class="masthead__nav" aria-label="Categories">
+          <a class="navlink" href="/" aria-current={here === '/' ? 'page' : undefined}>Index</a>
+          {categories.map((category) => (
+            <a
+              class="navlink"
+              href={`/category/${category}`}
+              aria-current={here === `/category/${category}` ? 'page' : undefined}
+            >
+              {category}
+            </a>
+          ))}
+        </nav>
+      </div>
     </header>
-    <main><slot /></main>
+
+    <main id="main"><slot /></main>
+
     <footer class="site-footer">
-      <p>© 2026 trendingprompt.org</p>
+      <div class="shell footer__inner">
+        <p class="footer__note">One AI prompt a day · {all.length} published</p>
+        <p class="footer__note">© 2026 trendingprompt.org</p>
+      </div>
     </footer>
   </body>
 </html>

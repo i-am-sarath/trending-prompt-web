@@ -19,11 +19,32 @@ export async function getStaticPaths() {
 const { category } = Astro.params;
 const { entries } = Astro.props;
 ---
-<BaseLayout title={`${category} prompts — trendingprompt`}>
-  <h1>{category}</h1>
-  <div class="grid">
-    {entries.map((p) => (
-      <PromptCard title={p.data.title} image={p.data.image} category={p.data.category} slug={p.slug} />
-    ))}
-  </div>
+<BaseLayout
+  title={`${category} prompts — trendingprompt`}
+  description={`Every ${category} AI image prompt in the trendingprompt archive. Copy any of them in one click.`}
+  image={entries[0]?.data.image}
+>
+  <section class="shell masthead-page">
+    <p class="eyebrow">Category</p>
+    <h1 class="masthead-page__title">{category}</h1>
+  </section>
+
+  <section class="shell section">
+    <div class="section__head">
+      <h2 class="section__title">{entries.length} {entries.length === 1 ? 'prompt' : 'prompts'}</h2>
+      <a class="backlink" href="/"><span aria-hidden="true">←</span> Index</a>
+    </div>
+    <div class="grid">
+      {entries.map((p) => (
+        <PromptCard
+          title={p.data.title}
+          image={p.data.image}
+          category={p.data.category}
+          slug={p.slug}
+          prompt={p.data.prompt}
+          date={p.data.date}
+        />
+      ))}
+    </div>
+  </section>
 </BaseLayout>

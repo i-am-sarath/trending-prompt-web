@@ -1,28 +1,71 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import CopyButton from '../../components/CopyButton.astro';
+import PromptCard from '../../components/PromptCard.astro';
+import PromptSpecimen from '../../components/PromptSpecimen.astro';
+import { excerpt, formatDate } from '../../lib/prompt';
 
 export async function getStaticPaths() {
-  const prompts = await getCollection('prompts');
-  return prompts.map((p) => ({ params: { slug: p.slug }, props: { entry: p } }));
+  const prompts = (await getCollection('prompts'))
+    .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+  return prompts.map((p) => ({
+    params: { slug: p.slug },
+    props: {
+      entry: p,
+      related: prompts
+        .filter((other) => other.slug !== p.slug && other.data.category === p.data.category)
+        .slice(0, 3),
+    },
+  }));
 }
 
-const { entry } = Astro.props;
-const { title, prompt, image, category, tool } = entry.data;
+const { entry, related } = Astro.props;
+const { title, prompt, image, category, tool, date } = entry.data;
 ---
-<BaseLayout title={`${title} — trendingprompt`} description={prompt.slice(0, 150)} image={image}>
-  <article class="prompt-page">
-    <img class="hero" src={image} alt={title} />
-    <h1>{title}</h1>
-    <div class="meta">
-      <a class="tag" href={`/category/${category}`}>{category}</a>
-      {tool && <span class="tag">{tool}</span>}
-    </div>
-    <pre class="prompt-text">{prompt}</pre>
-    <div class="actions">
-      <CopyButton text={prompt} />
-      <a class="download-btn" href={`data:text/plain;charset=utf-8,${encodeURIComponent(prompt)}`} download={`${entry.slug}.txt`}>Download .txt</a>
+<BaseLayout title={`${title} — trendingprompt`} description={excerpt(prompt, 155)} image={image}>
+  <article class="shell entry">
+    <a class="backlink" href="/">
+      <span aria-hidden="true">←</span> Index
+    </a>
+
+    <div class="entry__grid">
+      <figure class="entry__media rise">
+        <div class="plinth">
+          <img class="plinth__img" src={image} alt={title} fetchpriority="high" decoding="async" />
+        </div>
+      </figure>
+
+      <div class="rise" style="--d: 110ms">
+        <h1 class="entry__title">{title}</h1>
+        <div class="specs">
+          <a class="spec spec--link" href={`/category/${category}`}>{category}</a>
+          {tool && <span class="spec">{tool}</span>}
+          <span class="spec">{formatDate(date)}</span>
+        </div>
+        <PromptSpecimen prompt={prompt} filename={entry.slug} />
+      </div>
     </div>
   </article>
+
+  {related.length > 0 && (
+    <section class="shell section">
+      <div class="section__head">
+        <h2 class="section__title">More in {category}</h2>
+        <a class="backlink" href={`/category/${category}`}>See all</a>
+      </div>
+      <div class="grid">
+        {related.map((p) => (
+          <PromptCard
+            title={p.data.title}
+            image={p.data.image}
+            category={p.data.category}
+            slug={p.slug}
+            prompt={p.data.prompt}
+            date={p.data.date}
+          />
+        ))}
+      </div>
+    </section>
+  )}
 </BaseLayout>

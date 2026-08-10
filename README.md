@@ -22,13 +22,38 @@ npm run preview  # serve dist/ locally
 ```
 src/content/prompts/     one .md per prompt (the CMS writes here)
 src/content/config.ts    content schema (title, prompt, image, category, tool, date)
-src/pages/index.astro    gallery, newest first
-src/pages/prompts/[slug] single prompt page (image, text, copy, download)
+src/lib/prompt.ts        clause splitting, excerpts, date formatting
+src/pages/index.astro    latest drop + archive grid
+src/pages/prompts/[slug] single prompt page (image, specimen, copy, download)
 src/pages/category/[c]   filtered gallery
+src/components/          PromptCard (archive plate), PromptSpecimen, CopyButton
+src/styles/global.css    design tokens + all page styles
 public/uploads/          images (the CMS uploads here)
+public/fonts/            self-hosted woff2 (no third-party font requests)
 public/admin/            Sveltia CMS (index.html + config.yml)
 public/og-default.jpg    fallback social preview image
 ```
+
+## Design
+
+**Daylight gallery.** The UI is deliberately achromatic — gallery-white walls, ink
+captions, mount-board grey behind the artwork — so the only colour on a page comes
+from the images themselves. One accent, ultramarine (`--klein`, #002FA7), is reserved
+for things you can act on: the copy button, the clause separators, the active nav item,
+and focus rings.
+
+The signature element is the **specimen panel**: a prompt is split on its commas and
+each clause is set on its own line, so the structure of a well-built prompt is legible
+at a glance. It is a display layer only — copy and download always emit the original
+unmodified string.
+
+Typography does three jobs: **Anybody** (variable width) for the wordmark and display
+headings, **Instrument Sans** for UI and card titles, **DM Mono** for prompt text and
+every piece of metadata. All three are self-hosted in `public/fonts/` and preloaded, so
+the site makes no third-party requests.
+
+To re-skin, edit the `:root` block at the top of `src/styles/global.css` — the palette
+is nine tokens and nothing hardcodes a colour outside them.
 
 ### Adding a prompt by hand
 
@@ -97,9 +122,18 @@ Sveltia commits to GitHub on your behalf, which needs an OAuth relay. Sveltia of
 
 ---
 
-## Placeholder assets
+## Placeholder content — delete before launch
 
-`public/uploads/cyberpunk-city.jpg` and `public/og-default.jpg` are generated placeholders so the example entry and the default social card render. Replace both with real artwork before launch.
+Three example entries ship with the repo so the archive grid, category nav, and
+"more in this category" section have something to render:
+
+- `src/content/prompts/example-cyberpunk-city.md`
+- `src/content/prompts/example-neon-rain-alley.md`
+- `src/content/prompts/example-ceramic-still-life.md`
+
+Their images in `public/uploads/` and `public/og-default.jpg` are generated
+placeholders, not real AI output. Delete the three `example-*.md` files and their
+images once you have real prompts, and replace `og-default.jpg` with a real card.
 
 ## Out of scope (v1)
 

@@ -2,20 +2,69 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PromptCard from '../components/PromptCard.astro';
+import PromptSpecimen from '../components/PromptSpecimen.astro';
+import { formatDate } from '../lib/prompt';
 
 const prompts = (await getCollection('prompts'))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const [latest, ...archive] = prompts;
 ---
 <BaseLayout>
-  <h1>Trending AI Prompts</h1>
-  <div class="grid">
-    {prompts.map((p) => (
-      <PromptCard
-        title={p.data.title}
-        image={p.data.image}
-        category={p.data.category}
-        slug={p.slug}
-      />
-    ))}
-  </div>
+  {latest ? (
+    <section class="shell drop">
+      <p class="eyebrow rise">Latest drop · {formatDate(latest.data.date)}</p>
+
+      <div class="drop__grid">
+        <a class="drop__plate rise" style="--d: 90ms" href={`/prompts/${latest.slug}`}>
+          <img
+            class="drop__img"
+            src={latest.data.image}
+            alt={latest.data.title}
+            fetchpriority="high"
+            decoding="async"
+          />
+        </a>
+
+        <div class="rise" style="--d: 180ms">
+          <h1 class="drop__title">{latest.data.title}</h1>
+          <div class="specs">
+            <a class="spec spec--link" href={`/category/${latest.data.category}`}>
+              {latest.data.category}
+            </a>
+            {latest.data.tool && <span class="spec">{latest.data.tool}</span>}
+          </div>
+          <PromptSpecimen prompt={latest.data.prompt} filename={latest.slug} />
+        </div>
+      </div>
+    </section>
+  ) : (
+    <section class="shell drop">
+      <p class="eyebrow">No drops yet</p>
+      <p class="empty" style="margin-top: 1.4rem">
+        The archive is empty. Publish the first prompt from /admin and it appears here.
+      </p>
+    </section>
+  )}
+
+  {archive.length > 0 && (
+    <section class="shell section">
+      <div class="section__head">
+        <h2 class="section__title">Archive</h2>
+        <span class="section__count">{archive.length} {archive.length === 1 ? 'prompt' : 'prompts'}</span>
+      </div>
+      <div class="grid">
+        {archive.map((p) => (
+          <PromptCard
+            title={p.data.title}
+            image={p.data.image}
+            category={p.data.category}
+            slug={p.slug}
+            prompt={p.data.prompt}
+            date={p.data.date}
+          />
+        ))}
+      </div>
+    </section>
+  )}
 </BaseLayout>

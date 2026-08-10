@@ -1,0 +1,46 @@
+---
+import CopyButton from './CopyButton.astro';
+import { toClauses } from '../lib/prompt';
+
+interface Props {
+  prompt: string;
+  filename: string;
+}
+
+const { prompt, filename } = Astro.props;
+const clauses = toClauses(prompt);
+const parsed = clauses.length > 1;
+---
+<div class="specimen">
+  <div class="specimen__head">
+    <h2 class="specimen__label">The prompt</h2>
+    <span class="specimen__count">
+      {parsed ? `${clauses.length} clauses` : `${prompt.length} characters`}
+    </span>
+  </div>
+
+  <div class="specimen__body">
+    {parsed ? (
+      <ol class="clauses">
+        {clauses.map((clause, i) => (
+          <li class="clause">
+            {clause}{i < clauses.length - 1 && <span class="clause__sep">,</span>}
+          </li>
+        ))}
+      </ol>
+    ) : (
+      <p class="prompt-plain">{prompt}</p>
+    )}
+  </div>
+
+  <div class="actions">
+    <CopyButton text={prompt} />
+    <a
+      class="btn btn--ghost"
+      href={`data:text/plain;charset=utf-8,${encodeURIComponent(prompt)}`}
+      download={`${filename}.txt`}
+    >
+      Download .txt
+    </a>
+  </div>
+</div>
