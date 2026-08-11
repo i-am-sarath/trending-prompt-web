@@ -49,6 +49,7 @@ const legal = [
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta name="theme-color" content="#efefeb" />
+    <meta name="google-site-verification" content="d9NUAGYjjGq9waLpUZjppUGVdi9r2f6Eej-fB0jeEXw" />
     <!-- Let Google use full-size image previews and untruncated snippets -->
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
 
@@ -78,6 +79,20 @@ const legal = [
     <link rel="preload" href="/fonts/dm-mono-latin-3.woff2" as="font" type="font/woff2" crossorigin />
 
     {schema && <script type="application/ld+json" set:html={JSON.stringify(schema)} />}
+
+    {/* Google Analytics — production builds only, so local development does not
+        pollute the property with your own page views. */}
+    {import.meta.env.PROD && (
+      <Fragment>
+        <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-2H2QRC4DSS"></script>
+        <script is:inline>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-2H2QRC4DSS');
+        </script>
+      </Fragment>
+    )}
 
     <!-- AdSense: uncomment and set client id AFTER approval -->
     <!--
