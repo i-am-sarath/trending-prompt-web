@@ -3,15 +3,21 @@ backend:
   repo: i-am-sarath/trending-prompt-web # <-- set this
   branch: main
 
+site_url: https://trendingprompt.org
+display_url: https://trendingprompt.org
+
 media_folder: "public/uploads"
 public_folder: "/uploads"
 
 collections:
   - name: "prompts"
     label: "Prompts"
+    label_singular: "Prompt"
     folder: "src/content/prompts"
     create: true
     slug: "{{slug}}"
+    summary: "{{title}} — {{category}}"
+    sortable_fields: ["date", "title"]
     fields:
       - { label: "Title", name: "title", widget: "string" }
       - { label: "Prompt Text", name: "prompt", widget: "text" }
@@ -32,3 +38,37 @@ collections:
         default: "general"
       - { label: "Tool", name: "tool", widget: "string", required: false }
       - { label: "Date", name: "date", widget: "datetime" }
+      - label: "Notes (optional)"
+        name: "body"
+        widget: "markdown"
+        required: false
+        hint: "Why this prompt works, which clause does what, what to swap. This is the original writing that lifts an entry above a caption — worth 150+ words."
+
+  - name: "posts"
+    label: "Blog"
+    label_singular: "Guide"
+    folder: "src/content/posts"
+    create: true
+    slug: "{{slug}}"
+    summary: "{{title}}"
+    sortable_fields: ["date", "title"]
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - label: "Description"
+        name: "description"
+        widget: "text"
+        hint: "One or two sentences. Used as the page meta description and the blog index summary — keep it under about 160 characters."
+      - { label: "Date", name: "date", widget: "datetime" }
+      - { label: "Updated", name: "updated", widget: "datetime", required: false }
+      - label: "Category"
+        name: "category"
+        widget: "select"
+        options: ["guides", "reference", "comparisons", "workflow", "legal"]
+        default: "guides"
+      - { label: "Tags", name: "tags", widget: "list", required: false }
+      - label: "Author"
+        name: "author"
+        widget: "string"
+        default: "The trendingprompt desk"
+      - { label: "Draft", name: "draft", widget: "boolean", default: false }
+      - { label: "Body", name: "body", widget: "markdown" }

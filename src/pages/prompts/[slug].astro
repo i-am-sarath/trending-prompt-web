@@ -3,7 +3,8 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PromptCard from '../../components/PromptCard.astro';
 import PromptSpecimen from '../../components/PromptSpecimen.astro';
-import { excerpt, formatDate } from '../../lib/prompt';
+import { excerpt, formatDate, isoDate } from '../../lib/prompt';
+import { SITE } from '../../lib/site';
 
 export async function getStaticPaths() {
   const prompts = (await getCollection('prompts'))
@@ -22,12 +23,46 @@ export async function getStaticPaths() {
 
 const { entry, related } = Astro.props;
 const { title, prompt, image, category, tool, date } = entry.data;
+const { Content } = await entry.render();
+const hasNotes = entry.body.trim().length > 0;
+
+const url = `${SITE.url}/prompts/${entry.slug}/`;
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'ImageObject',
+    name: title,
+    description: excerpt(prompt, 200),
+    contentUrl: `${SITE.url}${image}`,
+    datePublished: isoDate(date),
+    ...(tool ? { creditText: tool } : {}),
+    isPartOf: { '@type': 'WebSite', name: SITE.name, url: SITE.url },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: SITE.url },
+      { '@type': 'ListItem', position: 2, name: category, item: `${SITE.url}/category/${category}/` },
+      { '@type': 'ListItem', position: 3, name: title, item: url },
+    ],
+  },
+];
 ---
-<BaseLayout title={`${title} — trendingprompt`} description={excerpt(prompt, 155)} image={image}>
+<BaseLayout
+  title={`${title} — AI prompt for ${tool ?? 'image generation'}`}
+  description={excerpt(prompt, 155)}
+  image={image}
+  schema={schema}
+>
   <article class="shell entry">
-    <a class="backlink" href="/">
-      <span aria-hidden="true">←</span> Index
-    </a>
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href="/">Home</a>
+      <span class="crumbs__sep" aria-hidden="true">/</span>
+      <a href={`/category/${category}`}>{category}</a>
+      <span class="crumbs__sep" aria-hidden="true">/</span>
+      <span class="crumbs__current" aria-current="page">{title}</span>
+    </nav>
 
     <div class="entry__grid">
       <figure class="entry__media rise">
@@ -44,6 +79,13 @@ const { title, prompt, image, category, tool, date } = entry.data;
           <span class="spec">{formatDate(date)}</span>
         </div>
         <PromptSpecimen prompt={prompt} filename={entry.slug} />
+
+        {hasNotes && (
+          <section class="notes">
+            <h2 class="notes__label">Notes on this prompt</h2>
+            <div class="prose"><Content /></div>
+          </section>
+        )}
       </div>
     </div>
   </article>

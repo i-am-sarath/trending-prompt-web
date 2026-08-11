@@ -1,0 +1,164 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE } from '../lib/site';
+
+const title = 'Privacy policy';
+const description =
+  'What trendingprompt collects, what advertising and hosting partners collect, the cookies involved, and how to opt out or exercise your rights.';
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: title,
+  description,
+  url: `${SITE.url}/privacy`,
+  dateModified: '2026-08-11',
+};
+---
+<BaseLayout title={`${title} — trendingprompt`} description={description} schema={schema}>
+  <section class="shell page">
+    <p class="eyebrow">Legal</p>
+    <h1 class="page__title">Privacy policy</h1>
+    <p class="lede">
+      This policy explains what happens to information about you when you visit
+      {' '}{SITE.legalName}. Last reviewed {SITE.policyUpdated}.
+    </p>
+
+    <div class="page__body prose">
+      <h2>The short version</h2>
+      <p>
+        This site has no accounts, no login, no newsletter and no contact form. It does not ask you
+        for your name, email address or any other personal detail, and it has no database in which
+        to store one. What data exists is created automatically by the companies that host the site
+        and — once advertising is enabled — serve its ads.
+      </p>
+
+      <h2>Who is responsible</h2>
+      <p>
+        {SITE.legalName} is an independently run website. For any question about this policy or
+        about data associated with your visit, contact
+        <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.
+      </p>
+
+      <h2>Information collected automatically</h2>
+      <p>
+        The site is served by Cloudflare Pages. Like every web host, Cloudflare processes technical
+        information needed to deliver a page and to protect the service from abuse. That typically
+        includes your IP address, the page requested, the time of the request, your browser's user
+        agent string, and the referring page. This information is used for delivery, security and
+        aggregate traffic measurement. It is not used to build a profile of you and is not sold.
+      </p>
+
+      <h2>Cookies and similar technologies</h2>
+      <p>
+        The site itself sets no cookies for analytics, personalisation or tracking, and stores
+        nothing in your browser that identifies you.
+      </p>
+      <p>
+        Third parties may set cookies of their own, in two circumstances:
+      </p>
+      <ul>
+        <li>
+          <strong>Security and delivery.</strong> Cloudflare may set a cookie to distinguish
+          legitimate visitors from automated traffic.
+        </li>
+        <li>
+          <strong>Advertising.</strong> When advertising is enabled on this site, the ad network
+          and its partners may set cookies or read device identifiers to select and measure ads.
+        </li>
+      </ul>
+      <p>
+        You can block or delete cookies in your browser settings at any time. The site remains fully
+        usable with cookies disabled — nothing on it depends on them.
+      </p>
+
+      <h2>Advertising</h2>
+      <p>
+        This site is funded by advertising served through Google AdSense and, potentially, other
+        networks.
+      </p>
+      <ul>
+        <li>
+          Google, as a third-party vendor, uses cookies to serve ads on this site.
+        </li>
+        <li>
+          Google's use of advertising cookies — including the DoubleClick DART cookie — enables it
+          and its partners to serve ads to you based on your visit to this site and other sites on
+          the internet.
+        </li>
+        <li>
+          You may opt out of personalised advertising by visiting
+          <a href="https://www.google.com/settings/ads" rel="nofollow noopener" target="_blank">Google Ads Settings</a>.
+          You can opt out of a wider set of vendors at
+          <a href="https://optout.aboutads.info/" rel="nofollow noopener" target="_blank">aboutads.info</a>
+          and
+          <a href="https://www.youronlinechoices.eu/" rel="nofollow noopener" target="_blank">Your Online Choices</a>.
+        </li>
+        <li>
+          Third-party ad networks operating on this site have their own privacy policies governing
+          the data they collect. Their practices are not controlled by this site.
+        </li>
+      </ul>
+      <p>
+        Opting out of personalised ads does not remove advertising; it makes the ads you see less
+        specific to you.
+      </p>
+
+      <h2>If you are in the EEA, UK or Switzerland</h2>
+      <p>
+        Where advertising or measurement requires consent, you will be shown a consent message
+        before those cookies are set, and you can change or withdraw your choice at any time through
+        that message. The lawful bases relied on are consent, for advertising and any non-essential
+        cookies, and legitimate interest, for the security and delivery logging described above.
+      </p>
+      <p>
+        You have the right to access, correct, erase, restrict or object to the processing of your
+        personal data, and the right to lodge a complaint with your national supervisory authority.
+        Because this site holds no records that identify you, requests about advertising data are
+        usually best directed to the advertising vendor; email the address above and you will be
+        pointed to the right place.
+      </p>
+
+      <h2>If you are in California</h2>
+      <p>
+        This site does not sell or share personal information for money. Personalised advertising
+        may qualify as "sharing" for cross-context behavioural advertising under the CCPA/CPRA. You
+        can opt out through the ad-settings links above, and via any "Do Not Sell or Share My
+        Personal Information" control displayed on this site. Requests to know, delete or correct
+        can be sent to <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.
+      </p>
+
+      <h2>Children</h2>
+      <p>
+        This site is aimed at a general adult audience and is not directed at children under 13. It
+        does not knowingly collect personal information from children. If you believe a child has
+        provided personal information, contact the address above and it will be removed.
+      </p>
+
+      <h2>Links to other sites</h2>
+      <p>
+        Guides on this site link to AI tools, documentation and other external pages. Once you
+        follow a link, you are on someone else's site under someone else's policy. This policy
+        covers only {SITE.legalName}.
+      </p>
+
+      <h2>Data retention</h2>
+      <p>
+        Because no personal data is collected directly, there is nothing held here to retain. Server
+        and security logs are retained by the hosting provider under its own retention schedule.
+      </p>
+
+      <h2>Changes to this policy</h2>
+      <p>
+        This policy will change when the site changes — most likely when advertising or analytics is
+        added or replaced. The review date at the top is updated whenever that happens, and material
+        changes will be noted on this page rather than made silently.
+      </p>
+
+      <h2>Contact</h2>
+      <p>
+        Questions about this policy: <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.
+      </p>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,24 +1,45 @@
 ---
 import '../styles/global.css';
-import { getCollection } from 'astro:content';
+import { SITE } from '../lib/site';
 
 interface Props {
   title?: string;
   description?: string;
   image?: string;
   url?: string;
+  ogType?: 'website' | 'article';
+  /** JSON-LD graph for this page. Rendered verbatim into a ld+json script. */
+  schema?: Record<string, unknown> | Record<string, unknown>[];
+  publishedTime?: string;
+  modifiedTime?: string;
 }
 
 const {
   title = 'Trending Prompt — AI prompt gallery, one drop a day',
-  description = 'A daily gallery of AI image prompts. See the picture, take the prompt — copy or download it in one click.',
+  description = 'A daily gallery of AI image prompts with the images they produce. See the picture, take the prompt — copy or download it in one click.',
   image = '/og-default.jpg',
   url = Astro.url.href,
+  ogType = 'website',
+  schema,
+  publishedTime,
+  modifiedTime,
 } = Astro.props;
 
-const all = await getCollection('prompts');
-const categories = [...new Set(all.map((p) => p.data.category))].sort();
 const here = Astro.url.pathname.replace(/\/+$/, '') || '/';
+
+const nav = [
+  { href: '/', label: 'Index' },
+  { href: '/blog', label: 'Blog' },
+  { href: '/about', label: 'About' },
+];
+
+const legal = [
+  { href: '/about', label: 'About' },
+  { href: '/blog', label: 'Blog' },
+  { href: '/privacy', label: 'Privacy' },
+  { href: '/terms', label: 'Terms' },
+  { href: '/contact', label: 'Contact' },
+];
 ---
 <!doctype html>
 <html lang="en">
@@ -28,13 +49,20 @@ const here = Astro.url.pathname.replace(/\/+$/, '') || '/';
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta name="theme-color" content="#efefeb" />
+    <!-- Let Google use full-size image previews and untruncated snippets -->
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
 
     <!-- Open Graph / Twitter: makes shared links show the image -->
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:locale" content="en_GB" />
+    <meta property="og:image:alt" content={title} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={new URL(image, Astro.site)} />
     <meta property="og:url" content={url} />
+    {publishedTime && <meta property="article:published_time" content={publishedTime} />}
+    {modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
@@ -42,10 +70,14 @@ const here = Astro.url.pathname.replace(/\/+$/, '') || '/';
 
     <link rel="canonical" href={url} />
     <link rel="icon" href="/favicon.svg" />
+    <link rel="sitemap" href="/sitemap.xml" />
+    <link rel="alternate" type="application/rss+xml" title="trendingprompt guides" href="/rss.xml" />
 
     <link rel="preload" href="/fonts/anybody-latin-1.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/instrument-sans-latin-1.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/dm-mono-latin-3.woff2" as="font" type="font/woff2" crossorigin />
+
+    {schema && <script type="application/ld+json" set:html={JSON.stringify(schema)} />}
 
     <!-- AdSense: uncomment and set client id AFTER approval -->
     <!--
@@ -58,15 +90,14 @@ const here = Astro.url.pathname.replace(/\/+$/, '') || '/';
     <header class="masthead">
       <div class="shell masthead__inner">
         <a href="/" class="wordmark">trendingprompt</a>
-        <nav class="masthead__nav" aria-label="Categories">
-          <a class="navlink" href="/" aria-current={here === '/' ? 'page' : undefined}>Index</a>
-          {categories.map((category) => (
+        <nav class="masthead__nav" aria-label="Main">
+          {nav.map((item) => (
             <a
               class="navlink"
-              href={`/category/${category}`}
-              aria-current={here === `/category/${category}` ? 'page' : undefined}
+              href={item.href}
+              aria-current={here === item.href.replace(/\/+$/, '') || (item.href === '/blog' && here.startsWith('/blog')) ? 'page' : undefined}
             >
-              {category}
+              {item.label}
             </a>
           ))}
         </nav>
@@ -77,8 +108,10 @@ const here = Astro.url.pathname.replace(/\/+$/, '') || '/';
 
     <footer class="site-footer">
       <div class="shell footer__inner">
-        <p class="footer__note">One AI prompt a day · {all.length} published</p>
-        <p class="footer__note">© 2026 trendingprompt.org</p>
+        <nav class="footer__links" aria-label="Footer">
+          {legal.map((item) => <a class="footer__link" href={item.href}>{item.label}</a>)}
+        </nav>
+        <p class="footer__note">© 2026 {SITE.legalName} · {SITE.tagline}</p>
       </div>
     </footer>
   </body>

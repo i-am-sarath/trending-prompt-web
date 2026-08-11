@@ -1,0 +1,74 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE } from '../lib/site';
+
+const title = 'Contact';
+const description =
+  'How to reach trendingprompt about corrections, takedown requests, licensing and advertising.';
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'ContactPage',
+  name: title,
+  description,
+  url: `${SITE.url}/contact`,
+  mainEntity: {
+    '@type': 'Organization',
+    name: SITE.name,
+    url: SITE.url,
+    email: SITE.email,
+    contactPoint: [
+      { '@type': 'ContactPoint', contactType: 'editorial', email: SITE.email, availableLanguage: 'English' },
+    ],
+  },
+};
+---
+<BaseLayout title={`${title} — trendingprompt`} description={description} schema={schema}>
+  <section class="shell page">
+    <p class="eyebrow">Contact</p>
+    <h1 class="page__title">Get in touch</h1>
+    <p class="lede">
+      One mailbox, read by the person who writes the site. Email is the only channel — there is no
+      contact form, because the site has no server to receive one.
+    </p>
+
+    <div class="page__body prose">
+      <p>
+        <a href={`mailto:${SITE.email}`}><strong>{SITE.email}</strong></a>
+      </p>
+      <p>
+        Expect a reply within a few days. Anything that needs action on the site — a correction, a
+        takedown — is handled ahead of everything else.
+      </p>
+
+      <h2>Corrections and prompts that don't reproduce</h2>
+      <p>
+        If a prompt does not produce anything like the image shown, say which entry, which tool and
+        version you used, and what you got instead. Prompts get re-tested from a clean session, and
+        an entry that cannot be reproduced is corrected or pulled.
+      </p>
+
+      <h2>Takedown and copyright</h2>
+      <p>
+        If you believe material on this site infringes your rights, email the address above with the
+        URL of the page, a description of the work concerned, and enough detail to identify your
+        claim. Requests are actioned on receipt while they are being reviewed rather than after.
+      </p>
+
+      <h2>Using prompts and images elsewhere</h2>
+      <p>
+        Prompt text on this site is free to use, adapt and publish without asking or crediting —
+        that is what it is here for. Images are generated output shown as evidence that a prompt
+        works; if you want to reuse one, check the <a href="/terms">terms</a> first, and remember
+        that the licence attached to an AI image also depends on the tool that made it.
+      </p>
+
+      <h2>Advertising</h2>
+      <p>
+        Advertising on the site is served through third-party networks rather than sold directly.
+        Enquiries are welcome at the address above, but note that no advertiser gets editorial
+        input — see <a href="/about">about</a> for how that line is drawn.
+      </p>
+    </div>
+  </section>
+</BaseLayout>

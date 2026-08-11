@@ -1,0 +1,43 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PromptCard from '../components/PromptCard.astro';
+
+const prompts = (await getCollection('prompts'))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 4);
+---
+<BaseLayout
+  title="Page not found — trendingprompt"
+  description="That page does not exist. Browse the latest AI image prompts instead."
+>
+  <section class="shell page">
+    <p class="eyebrow">404</p>
+    <h1 class="page__title">That page isn't here</h1>
+    <p class="lede">
+      The link may be old, or the entry may have been renamed. The latest prompts are below, and
+      the <a href="/blog">guides</a> are all still where they were.
+    </p>
+  </section>
+
+  {prompts.length > 0 && (
+    <section class="shell section">
+      <div class="section__head">
+        <h2 class="section__title">Latest prompts</h2>
+        <a class="backlink" href="/">Index</a>
+      </div>
+      <div class="grid">
+        {prompts.map((p) => (
+          <PromptCard
+            title={p.data.title}
+            image={p.data.image}
+            category={p.data.category}
+            slug={p.slug}
+            prompt={p.data.prompt}
+            date={p.data.date}
+          />
+        ))}
+      </div>
+    </section>
+  )}
+</BaseLayout>

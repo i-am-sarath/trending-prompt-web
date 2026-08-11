@@ -21,18 +21,45 @@ npm run preview  # serve dist/ locally
 
 ```
 src/content/prompts/     one .md per prompt (the CMS writes here)
-src/content/config.ts    content schema (title, prompt, image, category, tool, date)
-src/lib/prompt.ts        clause splitting, excerpts, date formatting
-src/pages/index.astro    latest drop + archive grid
-src/pages/prompts/[slug] single prompt page (image, specimen, copy, download)
+src/content/posts/       one .md per blog guide (the CMS writes here)
+src/content/config.ts    schemas for both collections
+src/lib/prompt.ts        clause splitting, excerpts, dates, reading time
+src/lib/site.ts          site URL, name, contact email, policy date
+src/pages/index.astro    intro + latest drop + archive grid
+src/pages/prompts/[slug] single prompt page (image, specimen, notes, copy)
 src/pages/category/[c]   filtered gallery
-src/components/          PromptCard (archive plate), PromptSpecimen, CopyButton
+src/pages/blog/          guide index and article template (TOC, prev/next)
+src/pages/about|contact|privacy|terms   static pages
+src/pages/404.astro      not-found page (Cloudflare serves it automatically)
+src/pages/sitemap.xml.ts generated sitemap
+src/pages/rss.xml.ts     generated RSS feed
+src/components/          PromptCard, PromptSpecimen, CopyButton, CategoryNav
 src/styles/global.css    design tokens + all page styles
 public/uploads/          images (the CMS uploads here)
 public/fonts/            self-hosted woff2 (no third-party font requests)
 public/admin/            Sveltia CMS (index.html + config.yml)
+public/robots.txt        crawl rules + sitemap pointer
 public/og-default.jpg    fallback social preview image
 ```
+
+### Before you launch — three edits only you can make
+
+1. **`src/lib/site.ts`** — set `email` to a mailbox you actually read. It appears on
+   Contact, Privacy and Terms.
+2. **`src/pages/about.astro`** — there is a `TODO` comment in the "Who runs this"
+   section. Put your name and a line of background there. Ad reviewers and readers
+   both look for a real person, and it is the highest-value edit on the site.
+3. **Delete the example content** (see the placeholder section at the end of this file).
+
+### SEO surface
+
+Every page carries a canonical URL, Open Graph and Twitter card tags, and
+`max-image-preview:large`. Structured data is emitted per page type: `WebSite` and
+`ItemList` on the home page, `Article` + `BreadcrumbList` on guides, `ImageObject` +
+`BreadcrumbList` on prompts, `CollectionPage` on categories, and `AboutPage` /
+`ContactPage` on those pages. Visible breadcrumbs match the schema. `sitemap.xml` and
+`rss.xml` are generated at build time from the collections, so new entries appear
+without touching anything.
 
 ## Design
 
@@ -114,11 +141,51 @@ Sveltia commits to GitHub on your behalf, which needs an OAuth relay. Sveltia of
 
 **Note:** `/admin` writes to GitHub via the API, so it only works on the deployed site with the OAuth app configured — not against `npm run dev` out of the box.
 
-## 4. AdSense (later, after traffic)
+## 4. AdSense
 
-1. Do **not** add ad code until AdSense approves the domain (it needs original content + real traffic).
-2. On approval, uncomment the AdSense `<script>` in `src/layouts/BaseLayout.astro` and set your `ca-pub-` publisher id.
-3. Use manual ad units in the gallery and prompt pages. Avoid auto-ads — the layout shift hurts Core Web Vitals.
+The structural prerequisites are in place: About, Contact, Privacy and Terms pages,
+16 long-form guides, per-prompt editorial notes, working navigation, a sitemap and a
+feed. What remains is content volume and the application itself.
+
+**Before applying**
+
+- Publish real prompts. Reviewers reject galleries that are thin, and three example
+  entries is thin. Aim for 25–30 real entries with genuine notes on each.
+- Delete the example content and placeholder images.
+- Fill in the three edits listed at the top of this file — an anonymous site with a
+  generic contact address is a common rejection reason.
+- Verify the site in Google Search Console and submit `https://trendingprompt.org/sitemap.xml`.
+  Being indexed is what produces the traffic that makes the account worth having.
+
+**Applying**
+
+1. Sign up at adsense.com, add the site, paste the verification snippet.
+2. Review typically takes a few days to a couple of weeks.
+3. On approval, uncomment the AdSense `<script>` in `src/layouts/BaseLayout.astro` and
+   set your `ca-pub-` publisher id.
+
+**`ads.txt` — deliberately not included.** An `ads.txt` file that does not list Google
+as an authorised seller is worse than having no file at all, because it actively
+declares that nobody is authorised to sell your inventory. Create `public/ads.txt`
+*after* approval, containing the exact line AdSense gives you:
+
+```
+google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0
+```
+
+**Placement.** Use manual units — after the specimen panel on a prompt page, and
+between archive rows. Avoid auto-ads: they inject blocks that shift layout, which
+costs Core Web Vitals on exactly the pages you want ranking.
+
+**EEA/UK consent.** Serving personalised ads to European visitors requires a consent
+mechanism. You do not need to build one: enable Google's own GDPR message under
+Privacy & messaging in the AdSense dashboard. The privacy policy already describes
+the arrangement.
+
+> The Privacy and Terms pages are a solid, honest starting template written for this
+> site's actual setup — no analytics, no accounts, ads via Google. They are not legal
+> advice. Have them reviewed if the site becomes commercially significant, and update
+> the review date in `src/lib/site.ts` whenever they change.
 
 ---
 

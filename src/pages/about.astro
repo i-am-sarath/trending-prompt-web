@@ -1,0 +1,102 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE } from '../lib/site';
+
+const title = 'About trendingprompt';
+const description =
+  'What trendingprompt publishes, how each prompt is tested before it goes up, and who is behind the site.';
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'AboutPage',
+  name: title,
+  description,
+  url: `${SITE.url}/about`,
+  publisher: { '@type': 'Organization', name: SITE.name, url: SITE.url, email: SITE.email },
+};
+---
+<BaseLayout title={`${title} — trendingprompt`} description={description} schema={schema}>
+  <section class="shell page">
+    <p class="eyebrow">About</p>
+    <h1 class="page__title">A prompt a day, with the picture it made</h1>
+    <p class="lede">
+      Most places that share AI prompts show you the image and bury the words, or list the words
+      with no evidence they produce anything. trendingprompt publishes both, together, one entry
+      at a time.
+    </p>
+
+    <div class="page__body prose">
+      <h2>What gets published</h2>
+      <p>
+        One prompt a day. Each entry is a single generated image, the exact text that produced it,
+        the tool it was made in, and — where it helps — notes on which clause is doing the heavy
+        lifting and what to change for a different result. Nothing is paraphrased. The text on the
+        page is the text that went into the model, punctuation and parameters included, so you can
+        paste it and get something recognisably similar.
+      </p>
+      <p>
+        Prompts are grouped by subject rather than by tool, because the useful part transfers.
+        A lighting clause that works for a portrait in one model usually works in another; the
+        parameters after the comma are the part you swap.
+      </p>
+
+      <h2>How each prompt is tested</h2>
+      <p>
+        A prompt does not go up until it has been run at least three times from a clean session,
+        with no reference image and no prior context, to make sure the result is a property of the
+        words rather than of a lucky seed. If two of three runs miss badly, the prompt gets rewritten
+        or dropped. Where a result depends on a specific model version or parameter, that is stated
+        on the entry — a prompt that only works on one release with one flag is a footnote, not a
+        recipe.
+      </p>
+      <p>
+        Images are the raw output of the tool named on the entry. When something has been upscaled
+        or cropped, the entry says so. Nothing is retouched to look better than the prompt can
+        actually produce, because the whole point of the site is that you can reproduce it.
+      </p>
+
+      <h2>The guides</h2>
+      <p>
+        Alongside the daily entries, the <a href="/blog">blog</a> covers the craft underneath them:
+        how prompt structure affects what a model weights, what the parameters actually change,
+        which camera and lighting vocabulary carries real meaning, and where the tools genuinely
+        differ from one another. These are written from repeated hands-on use, and updated when the
+        tools change — which, in this field, is often.
+      </p>
+
+      <h2>Corrections</h2>
+      <p>
+        If a prompt on this site does not reproduce, or a guide describes a parameter that has since
+        changed, that is a bug and worth reporting. Write to
+        <a href={`mailto:${SITE.email}`}>{SITE.email}</a> and the entry gets re-tested. Corrections
+        are made on the page itself rather than quietly deleted, and substantive guide updates carry
+        an updated date.
+      </p>
+
+      <h2>Who runs this</h2>
+      <!-- TODO: replace with your name and a sentence of background. Readers and ad reviewers
+           both look for a real person here; it is the single highest-value edit on this page. -->
+      <p>
+        trendingprompt is an independent project run by a single editor, not a company or a content
+        farm. There is no team, no syndication, and no automated posting: every entry and every
+        guide is written and checked by hand before it goes live.
+      </p>
+
+      <h2>How the site pays for itself</h2>
+      <p>
+        The site is free and has no accounts, no paywall, and no newsletter to sign up for. Running
+        costs are covered by advertising. Ads, where present, are clearly distinguishable from
+        editorial content, and no advertiser has any input into which prompts get published or how
+        the tools are assessed. See the <a href="/privacy">privacy policy</a> for what advertising
+        means for the data collected about your visit.
+      </p>
+
+      <h2>Contact</h2>
+      <p>
+        Corrections, takedown requests, and advertising enquiries all go to
+        <a href={`mailto:${SITE.email}`}>{SITE.email}</a>. More detail on the
+        <a href="/contact">contact page</a>.
+      </p>
+    </div>
+  </section>
+</BaseLayout>

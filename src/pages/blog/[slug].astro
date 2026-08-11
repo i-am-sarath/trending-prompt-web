@@ -1,0 +1,117 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { formatLongDate, isoDate, readingTime } from '../../lib/prompt';
+import { SITE } from '../../lib/site';
+
+export async function getStaticPaths() {
+  const posts = (await getCollection('posts', ({ data }) => !data.draft))
+    .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+  return posts.map((post, i) => ({
+    params: { slug: post.slug },
+    props: { post, newer: posts[i - 1], older: posts[i + 1] },
+  }));
+}
+
+const { post, newer, older } = Astro.props;
+const { Content, headings } = await post.render();
+const sections = headings.filter((h) => h.depth === 2);
+const { title, description, date, updated, author, tags, category } = post.data;
+
+const url = `${SITE.url}/blog/${post.slug}`;
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: title,
+    description,
+    datePublished: isoDate(date),
+    dateModified: isoDate(updated ?? date),
+    author: { '@type': 'Organization', name: author, url: SITE.url },
+    publisher: { '@type': 'Organization', name: SITE.name, url: SITE.url },
+    mainEntityOfPage: { '@type': 'WebPage', '@id': url },
+    image: `${SITE.url}/og-default.jpg`,
+    articleSection: category,
+    keywords: tags.join(', '),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: SITE.url },
+      { '@type': 'ListItem', position: 2, name: 'Blog', item: `${SITE.url}/blog` },
+      { '@type': 'ListItem', position: 3, name: title, item: url },
+    ],
+  },
+];
+---
+<BaseLayout
+  title={`${title} — trendingprompt`}
+  description={description}
+  ogType="article"
+  publishedTime={isoDate(date)}
+  modifiedTime={isoDate(updated ?? date)}
+  schema={schema}
+>
+  <article class="shell article">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href="/">Home</a>
+      <span class="crumbs__sep" aria-hidden="true">/</span>
+      <a href="/blog">Guides</a>
+      <span class="crumbs__sep" aria-hidden="true">/</span>
+      <span class="crumbs__current" aria-current="page">{category}</span>
+    </nav>
+
+    <header class="article__head">
+      <h1 class="article__title">{title}</h1>
+      <p class="article__standfirst">{description}</p>
+      <div class="article__meta">
+        <span>{formatLongDate(date)}</span>
+        <span>{readingTime(post.body)} min read</span>
+        <span>{category}</span>
+        {updated && <span>Updated {formatLongDate(updated)}</span>}
+      </div>
+    </header>
+
+    <div class="article__grid">
+      {sections.length > 2 && (
+        <aside class="article__aside">
+          <nav class="toc" aria-label="On this page">
+            <p class="toc__title">On this page</p>
+            <div class="toc__list">
+              {sections.map((h) => (
+                <a class="toc__link" href={`#${h.slug}`}>{h.text}</a>
+              ))}
+            </div>
+          </nav>
+        </aside>
+      )}
+
+      <div class="prose">
+        <Content />
+
+        {tags.length > 0 && (
+          <div class="tags">
+            {tags.map((tag) => <span class="spec">{tag}</span>)}
+          </div>
+        )}
+
+        <nav class="pager" aria-label="More guides">
+          {older ? (
+            <a class="pager__item" href={`/blog/${older.slug}`}>
+              <span class="pager__dir">← Older</span>
+              <span class="pager__title">{older.data.title}</span>
+            </a>
+          ) : <span />}
+          {newer && (
+            <a class="pager__item pager__item--next" href={`/blog/${newer.slug}`}>
+              <span class="pager__dir">Newer →</span>
+              <span class="pager__title">{newer.data.title}</span>
+            </a>
+          )}
+        </nav>
+      </div>
+    </div>
+  </article>
+</BaseLayout>

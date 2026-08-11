@@ -29,3 +29,24 @@ export function formatDate(date: Date): string {
     timeZone: 'UTC',
   });
 }
+
+/** "15 January 2026" for article bylines. */
+export function formatLongDate(date: Date): string {
+  return date.toLocaleDateString('en-GB', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    timeZone: 'UTC',
+  });
+}
+
+/** ISO date (YYYY-MM-DD) for <time datetime> and structured data. */
+export function isoDate(date: Date): string {
+  return date.toISOString().slice(0, 10);
+}
+
+/** Rounded up, 220 wpm — close enough for a reader, honest enough to print. */
+export function readingTime(body: string): number {
+  const words = body.trim().split(/\s+/).filter(Boolean).length;
+  return Math.max(1, Math.ceil(words / 220));
+}

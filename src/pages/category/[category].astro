@@ -2,6 +2,9 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PromptCard from '../../components/PromptCard.astro';
+import CategoryNav from '../../components/CategoryNav.astro';
+import { formatDate } from '../../lib/prompt';
+import { SITE } from '../../lib/site';
 
 export async function getStaticPaths() {
   const prompts = await getCollection('prompts');
@@ -18,15 +21,60 @@ export async function getStaticPaths() {
 
 const { category } = Astro.params;
 const { entries } = Astro.props;
+
+// Built from the entries themselves, so each category page carries its own text
+// rather than the same boilerplate with a word swapped.
+const tools = [...new Set(entries.map((e) => e.data.tool).filter(Boolean))];
+const oldest = entries[entries.length - 1];
+const newest = entries[0];
+
+const description = `Every ${category} AI image prompt in the trendingprompt archive — ${entries.length} tested ${
+  entries.length === 1 ? 'entry' : 'entries'
+}, each with the image it produced and one-click copy.`;
+
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: `${category} AI image prompts`,
+    description,
+    url: `${SITE.url}/category/${category}/`,
+    isPartOf: { '@type': 'WebSite', name: SITE.name, url: SITE.url },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: SITE.url },
+      { '@type': 'ListItem', position: 2, name: category, item: `${SITE.url}/category/${category}/` },
+    ],
+  },
+];
 ---
 <BaseLayout
-  title={`${category} prompts — trendingprompt`}
-  description={`Every ${category} AI image prompt in the trendingprompt archive. Copy any of them in one click.`}
+  title={`${category} AI image prompts — trendingprompt`}
+  description={description}
   image={entries[0]?.data.image}
+  schema={schema}
 >
   <section class="shell masthead-page">
-    <p class="eyebrow">Category</p>
-    <h1 class="masthead-page__title">{category}</h1>
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href="/">Home</a>
+      <span class="crumbs__sep" aria-hidden="true">/</span>
+      <span class="crumbs__current" aria-current="page">{category}</span>
+    </nav>
+
+    <h1 class="masthead-page__title">{category} prompts</h1>
+
+    <p class="lede">
+      {entries.length} tested {entries.length === 1 ? 'prompt' : 'prompts'} in {category}
+      {tools.length > 0 && <> , made with {tools.join(' and ')}</>}
+      {newest && oldest && newest.slug !== oldest.slug && (
+        <> , published between {formatDate(oldest.data.date)} and {formatDate(newest.data.date)}</>
+      )}. Each entry shows the image, the exact prompt broken into its clauses, and a copy button.
+    </p>
+
+    <div style="margin-top: 1.4rem"><CategoryNav active={category} /></div>
   </section>
 
   <section class="shell section">

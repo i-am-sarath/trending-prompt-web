@@ -1,0 +1,26 @@
+---
+import { getCollection } from 'astro:content';
+
+interface Props {
+  /** Currently active category, if any. */
+  active?: string;
+}
+
+const { active } = Astro.props;
+const prompts = await getCollection('prompts');
+const categories = [...new Set(prompts.map((p) => p.data.category))].sort();
+---
+{categories.length > 1 && (
+  <nav class="chips" aria-label="Prompt categories">
+    <a class="chip" href="/" aria-current={active ? undefined : 'page'}>All</a>
+    {categories.map((category) => (
+      <a
+        class="chip"
+        href={`/category/${category}`}
+        aria-current={active === category ? 'page' : undefined}
+      >
+        {category}
+      </a>
+    ))}
+  </nav>
+)}

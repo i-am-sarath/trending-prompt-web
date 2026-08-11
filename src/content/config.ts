@@ -12,4 +12,18 @@ const prompts = defineCollection({
   }),
 });
 
-export const collections = { prompts };
+const posts = defineCollection({
+  type: 'content',
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),     // also used as the meta description
+    date: z.date(),
+    updated: z.date().optional(),
+    category: z.string().default('guides'),
+    tags: z.array(z.string()).default([]),
+    author: z.string().default('The trendingprompt desk'),
+    draft: z.boolean().default(false),
+  }),
+});
+
+export const collections = { prompts, posts };

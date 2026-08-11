@@ -3,14 +3,50 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PromptCard from '../components/PromptCard.astro';
 import PromptSpecimen from '../components/PromptSpecimen.astro';
+import CategoryNav from '../components/CategoryNav.astro';
 import { formatDate } from '../lib/prompt';
+import { SITE } from '../lib/site';
 
 const prompts = (await getCollection('prompts'))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
 const [latest, ...archive] = prompts;
+
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: SITE.name,
+    alternateName: SITE.legalName,
+    url: SITE.url,
+    description: 'A daily gallery of AI image prompts with the images they produce.',
+    publisher: { '@type': 'Organization', name: SITE.name, url: SITE.url, email: SITE.email },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: 'Latest AI image prompts',
+    numberOfItems: prompts.length,
+    itemListElement: prompts.slice(0, 20).map((p, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      url: `${SITE.url}/prompts/${p.slug}/`,
+      name: p.data.title,
+    })),
+  },
+];
 ---
-<BaseLayout>
+<BaseLayout schema={schema}>
+  <section class="shell intro">
+    <p class="eyebrow">AI prompt gallery</p>
+    <h1 class="intro__title">Trending AI image prompts, one a day</h1>
+    <p class="intro__text">
+      Every entry is a generated image with the exact prompt that made it — broken into its
+      clauses so you can see how it is built, and copyable in one click. Tested across three
+      clean runs before it goes up. Craft notes are in the <a href="/blog">guides</a>.
+    </p>
+  </section>
+
   {latest ? (
     <section class="shell drop">
       <p class="eyebrow rise">Latest drop · {formatDate(latest.data.date)}</p>
@@ -27,7 +63,7 @@ const [latest, ...archive] = prompts;
         </a>
 
         <div class="rise" style="--d: 180ms">
-          <h1 class="drop__title">{latest.data.title}</h1>
+          <h2 class="drop__title">{latest.data.title}</h2>
           <div class="specs">
             <a class="spec spec--link" href={`/category/${latest.data.category}`}>
               {latest.data.category}
@@ -53,6 +89,7 @@ const [latest, ...archive] = prompts;
         <h2 class="section__title">Archive</h2>
         <span class="section__count">{archive.length} {archive.length === 1 ? 'prompt' : 'prompts'}</span>
       </div>
+      <div style="margin-bottom: 1.5rem"><CategoryNav /></div>
       <div class="grid">
         {archive.map((p) => (
           <PromptCard
