@@ -8,7 +8,7 @@ const prompts = defineCollection({
     image: z.string(),          // path under /uploads
     category: z.string().default('general'),
     tool: z.string().optional(), // e.g. Midjourney, DALL-E
-    date: z.date(),
+    date: z.coerce.date(),
   }),
 });
 
