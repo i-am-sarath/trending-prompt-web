@@ -18,7 +18,7 @@ prompt: |-
   VISUAL STYLE: Photorealistic collectible-toy photography, premium molded plastic, painted miniature details, realistic cardboard texture, subtle manufacturing imperfections, crisp product photography, authentic retail packaging construction, and nostalgic retro toy aesthetics without referencing any specific real-world toy brand.
 
   FINAL RESULT: Make the finished image look like a genuine collectible figure photographed directly after being packaged for a store shelf or online product listing. Preserve the subject's recognizable identity while convincingly translating them into a physical collectible figure. No real brand names, trademarked logos, copyrighted characters, watermarks, random text, or unnecessary design elements.
-image: /uploads/collectible-action-figure-blister-pack.png
+image: /uploads/ChatGPT Image Aug 14, 2026, 10_49_13 PM.png
 category: general
 tool: ChatGPT (GPT Image)
 date: 2026-08-14T22:58
