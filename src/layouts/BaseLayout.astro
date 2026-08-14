@@ -78,6 +78,11 @@ const legal = [
     <link rel="preload" href="/fonts/instrument-sans-latin-1.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/dm-mono-latin-3.woff2" as="font" type="font/woff2" crossorigin />
 
+    {/* Marks scripting as available before first paint, so progressive
+        enhancements (the collapsed prompt panel) can style themselves up front
+        instead of flashing their unenhanced state. */}
+    <script is:inline>document.documentElement.classList.add('js');</script>
+
     {schema && <script type="application/ld+json" set:html={JSON.stringify(schema)} />}
 
     {/* Google Analytics — production builds only, so local development does not

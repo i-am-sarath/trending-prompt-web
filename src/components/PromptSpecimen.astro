@@ -5,11 +5,23 @@ import { toClauses } from '../lib/prompt';
 interface Props {
   prompt: string;
   filename: string;
+  /**
+   * Collapse a long prompt to a fixed window behind a toggle. On the home page
+   * the specimen sits beside the artwork, and an unbounded panel runs far past
+   * the image; on the prompt's own page the full text is the point, so that
+   * page opts out.
+   */
+  collapsible?: boolean;
 }
 
-const { prompt, filename } = Astro.props;
+const { prompt, filename, collapsible = true } = Astro.props;
 const clauses = toClauses(prompt);
 const parsed = clauses.length > 1;
+
+/* Roughly the length at which the panel outgrows the artwork beside it.
+   Shorter prompts fit as they are and get no toggle. */
+const collapsed = collapsible && prompt.length > 600;
+const bodyId = `prompt-${filename}`;
 ---
 <div class="specimen">
   <div class="specimen__head">
@@ -19,7 +31,10 @@ const parsed = clauses.length > 1;
     </span>
   </div>
 
-  <div class="specimen__body">
+  <div
+    id={bodyId}
+    class:list={['specimen__body', collapsed && 'specimen__body--collapsed']}
+  >
     {parsed ? (
       <ol class="clauses">
         {clauses.map((clause, i) => (
@@ -33,6 +48,15 @@ const parsed = clauses.length > 1;
     )}
   </div>
 
+  {collapsed && (
+    <button class="specimen__toggle" type="button" aria-expanded="false" aria-controls={bodyId}>
+      <span class="specimen__toggle-label">Show full prompt</span>
+      <svg class="specimen__toggle-icon" width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <path d="M4 6.25 8 10.25l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    </button>
+  )}
+
   <div class="actions">
     <CopyButton text={prompt} />
     <a
@@ -44,3 +68,21 @@ const parsed = clauses.length > 1;
     </a>
   </div>
 </div>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('.specimen__toggle').forEach((btn) => {
+    const body = document.getElementById(btn.getAttribute('aria-controls') ?? '');
+    const label = btn.querySelector<HTMLElement>('.specimen__toggle-label');
+    if (!body) return;
+
+    btn.addEventListener('click', () => {
+      const open = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', String(!open));
+      body.classList.toggle('specimen__body--collapsed', open);
+      if (label) label.textContent = open ? 'Show full prompt' : 'Show less';
+      // Collapsing from below the fold would otherwise leave the reader
+      // stranded past the panel that just shrank.
+      if (open) btn.scrollIntoView({ block: 'nearest' });
+    });
+  });
+</script>

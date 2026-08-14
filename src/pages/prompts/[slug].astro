@@ -78,7 +78,7 @@ const schema = [
           {tool && <span class="spec">{tool}</span>}
           <span class="spec">{formatDate(date)}</span>
         </div>
-        <PromptSpecimen prompt={prompt} filename={entry.slug} />
+        <PromptSpecimen prompt={prompt} filename={entry.slug} collapsible={false} />
 
         {hasNotes && (
           <section class="notes">
