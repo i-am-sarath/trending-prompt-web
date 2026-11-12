@@ -38,6 +38,7 @@ collections:
         default: "general"
       - { label: "Tool", name: "tool", widget: "string", required: false }
       - { label: "Date", name: "date", widget: "datetime" }
+      - { label: "Draft (hide until image is ready)", name: "draft", widget: "boolean", default: false, required: false }
       - label: "Notes (optional)"
         name: "body"
         widget: "markdown"

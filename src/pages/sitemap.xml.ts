@@ -11,7 +11,7 @@ const abs = (path: string) => {
 const iso = (date: Date) => date.toISOString().slice(0, 10);
 
 export const GET: APIRoute = async () => {
-  const prompts = (await getCollection('prompts')).sort(
+  const prompts = (await getCollection('prompts', ({ data }) => !data.draft)).sort(
     (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
   );
   const posts = (await getCollection('posts', ({ data }) => !data.draft)).sort(

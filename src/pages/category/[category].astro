@@ -7,7 +7,7 @@ import { formatDate } from '../../lib/prompt';
 import { SITE } from '../../lib/site';
 
 export async function getStaticPaths() {
-  const prompts = await getCollection('prompts');
+  const prompts = await getCollection('prompts', ({ data }) => !data.draft);
   const categories = [...new Set(prompts.map((p) => p.data.category))];
   return categories.map((category) => ({
     params: { category },

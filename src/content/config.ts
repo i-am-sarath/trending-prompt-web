@@ -9,6 +9,7 @@ const prompts = defineCollection({
     category: z.string().default('general'),
     tool: z.string().optional(), // e.g. Midjourney, DALL-E
     date: z.coerce.date(),
+    draft: z.boolean().default(false), // hidden until the showcase image is uploaded
   }),
 });
 

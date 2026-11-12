@@ -7,7 +7,7 @@ import { excerpt, formatDate, isoDate } from '../../lib/prompt';
 import { SITE } from '../../lib/site';
 
 export async function getStaticPaths() {
-  const prompts = (await getCollection('prompts'))
+  const prompts = (await getCollection('prompts', ({ data }) => !data.draft))
     .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
   return prompts.map((p) => ({

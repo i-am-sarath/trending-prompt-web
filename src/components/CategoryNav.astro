@@ -7,7 +7,7 @@ interface Props {
 }
 
 const { active } = Astro.props;
-const prompts = await getCollection('prompts');
+const prompts = await getCollection('prompts', ({ data }) => !data.draft);
 const categories = [...new Set(prompts.map((p) => p.data.category))].sort();
 ---
 {categories.length > 1 && (
