@@ -18,11 +18,10 @@ prompt: |-
   COMPOSITION: Wide cinematic 16:9 framing with the character in the lower third and the landscape and sky dominating the frame.
 
   FINAL RESULT: A calm, beautiful animation still that feels hand-crafted and emotionally warm. No text, subtitles, logos, watermarks, 3D rendering, or photorealistic textures.
-image: /uploads/hand-painted-anime-countryside.png
+image: /uploads/hand-painted-anime-countryside.jpg
 category: anime
-tool: ChatGPT (GPT Image)
+tool: Gemini
 date: 2026-11-12T10:30
-draft: true
 ---
 
 The hand-painted anime look is everywhere, but naming a specific studio in a prompt invites refusals and dated, copy-paste results. This prompt describes the ingredients instead: gouache and watercolour backgrounds, traditional cel shading, towering cumulus clouds, and a slow slice-of-life setting. You get the same feel, and the result belongs to you rather than imitating someone's frame.

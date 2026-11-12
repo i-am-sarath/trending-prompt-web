@@ -16,11 +16,10 @@ prompt: |-
   FILM CHARACTER: Shot on 35mm portrait film and printed on glossy paper. Slightly warm color balance, soft skin rendering without digital retouching, mild grain, gentle softness at the edges of the frame, and a subtle analog color cast.
 
   FINAL RESULT: The portrait should look like a real scan from a 1990s yearbook page. Do not add text, names, page layouts, borders, logos, or watermarks, and avoid modern smartphone sharpness or beauty filters.
-image: /uploads/90s-yearbook-portrait.png
+image: /uploads/90s-yearbook-portrait.jpg
 category: portrait
-tool: ChatGPT (GPT Image)
+tool: Gemini
 date: 2026-11-12T10:20
-draft: true
 ---
 
 Yearbook portraits are one of the most rigid photographic formats ever produced, which is exactly why this prompt is reliable. Pose, framing, backdrop and lighting were essentially identical in every school in the country for a decade, and the model has seen that formula many times. BACKGROUND and LIGHTING are describing a standard, not inventing a look.

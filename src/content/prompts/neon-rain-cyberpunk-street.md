@@ -18,11 +18,10 @@ prompt: |-
   VISUAL STYLE: Cinematic sci-fi film still, high contrast, deep blacks, rich saturated color, subtle film grain, anamorphic lens flares, and realistic skin texture.
 
   FINAL RESULT: The image should feel like a frame from a big-budget sci-fi film shot practically on location in the rain. Avoid readable text, real logos, cartoonish effects, plastic skin, distorted anatomy, or watermarks.
-image: /uploads/neon-rain-cyberpunk-street.png
+image: /uploads/neon-rain-cyberpunk-street.jpg
 category: sci-fi
-tool: ChatGPT (GPT Image)
+tool: Gemini
 date: 2026-11-12T10:40
-draft: true
 ---
 
 Cyberpunk is one of the most over-prompted styles there is, and the generic version ("cyberpunk city, neon, 8k") gives you the same purple soup every time. This prompt holds up because of two specific choices.

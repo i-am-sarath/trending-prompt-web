@@ -693,6 +693,7 @@ button { font: inherit; color: inherit; }
 .prose pre,
 .prose table,
 .prose figure { margin-block: 1.15rem; }
+.prose img { width: auto; max-height: 78vh; margin-inline: auto; height: auto; }
 .prose p { font-size: 1.04rem; line-height: 1.72; text-wrap: pretty; }
 .prose h2 {
   font-family: var(--display);

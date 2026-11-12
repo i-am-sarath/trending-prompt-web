@@ -16,11 +16,10 @@ prompt: |-
   CAMERA & COMPOSITION: Eye-level close shot with the figurine in sharp focus in the foreground, and the monitor and box slightly softer behind it. Shallow depth of field, natural perspective, realistic scale.
 
   FINAL RESULT: The image should look like a genuine photo taken by a collector of a newly released figure on their workspace. No real brand names, trademarked logos, copyrighted characters, watermarks, or random text.
-image: /uploads/desk-collectible-figurine-with-box.png
+image: /uploads/desk-collectible-figurine-with-box.jpg
 category: product
-tool: ChatGPT (GPT Image)
+tool: Gemini
 date: 2026-11-12T10:10
-draft: true
 ---
 
 Where the blister-pack prompt sells the toy through its packaging, this one sells it through context: three objects that only make sense together. A figure, the 3D sculpt of that figure on a monitor, and the retail box with its illustration. Each one is a different rendering of the same person, and asking the model to keep all three consistent forces it to commit to a single, clear design.

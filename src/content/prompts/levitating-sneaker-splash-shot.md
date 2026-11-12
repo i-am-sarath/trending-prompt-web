@@ -16,11 +16,10 @@ prompt: |-
   CAMERA: Shot with a 100mm macro lens at f/8 with high-speed flash, edge-to-edge sharpness on the product and water, square 1:1 composition with the sneaker centered.
 
   FINAL RESULT: A polished commercial hero image ready for an e-commerce banner or social ad. No added text, slogans, brand logos that are not already on the product, watermarks, or extra shoes.
-image: /uploads/levitating-sneaker-splash-shot.png
+image: /uploads/levitating-sneaker-splash-shot.jpg
 category: product
-tool: ChatGPT (GPT Image)
+tool: Gemini
 date: 2026-11-12T11:00
-draft: true
 ---
 
 The most important sentence in this prompt is in the first section: "Do not invent or change any design elements." Product prompts are judged on fidelity, and without that explicit instruction models freely "improve" the stitching, the panels and the logo placement. That is fine for art, and fatal for an ad.

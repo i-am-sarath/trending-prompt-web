@@ -16,11 +16,10 @@ prompt: |-
   FILM CHARACTER: Square instant-film image inside a classic white instant-photo border with a thicker bottom margin. Slightly faded colors, soft contrast, subtle chemical vignetting, mild grain, and very faint light leaks.
 
   FINAL RESULT: The photograph should feel like a real instant print someone found in a shoebox — tender, slightly imperfect, and emotionally authentic. Avoid any text written on the border, artificial-looking skin, mismatched faces, distorted hands, logos, or watermarks.
-image: /uploads/polaroid-with-my-younger-self.png
+image: /uploads/polaroid-with-my-younger-self.jpg
 category: portrait
-tool: ChatGPT (GPT Image)
+tool: Gemini
 date: 2026-11-12T10:00
-draft: true
 ---
 
 This one only works if the model gets two references, so the header says so in capitals before anything else. Giving the model a single photo and asking it to "imagine my younger self" produces a generic child who shares nothing with you except hair colour; giving it an actual childhood picture turns the request into a compositing job, which current image models are far better at.
