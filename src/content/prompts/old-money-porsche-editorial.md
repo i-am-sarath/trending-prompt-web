@@ -1,5 +1,6 @@
 ---
 title: Old Money Porsche Editorial
+description: "Turn an uploaded portrait into an old-money fashion editorial with a Porsche in frame."
 prompt: |-
   MOODY LUXURY FASHION PORTRAIT — USE THE UPLOADED PHOTO AS THE SUBJECT REFERENCE
 
@@ -19,7 +20,14 @@ prompt: |-
 
   FINAL RESULT: Premium, understated, timeless, and cinematic. Avoid excessive logos, visible brand marks, artificial skin smoothing, exaggerated luxury elements, distorted anatomy, text, or watermarks.
 image: /uploads/ChatGPT Image Aug 11, 2026, 04_09_28 PM.png
-category: portrait
-tool: ''
+category: image-editing
+subject: portrait
+tool: ChatGPT
+tags:
+  - "portrait"
+  - "fashion"
+  - "photography"
+  - "chatgpt"
+trending: false
 date: 2026-08-11T16:10
 ---

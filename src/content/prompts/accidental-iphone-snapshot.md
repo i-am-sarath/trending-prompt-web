@@ -1,5 +1,6 @@
 ---
 title: Accidental iPhone Snapshot
+description: "Make an uploaded portrait look like an accidental, slightly imperfect iPhone snapshot."
 prompt: |-
   AUTHENTIC CASUAL SMARTPHONE SNAPSHOT — USE THE UPLOADED PHOTO AS THE SUBJECT REFERENCE
 
@@ -17,7 +18,13 @@ prompt: |-
 
   FINAL LOOK: The result should convincingly resemble an ordinary accidental phone photograph rather than an AI-generated or professionally photographed image. No filters, cinematic color grading, studio lighting, artificial beauty retouching, dramatic effects, text, logos, or watermarks.
 image: /uploads/ChatGPT Image Aug 11, 2026, 03_01_26 PM.png
-category: general
-tool: ''
+category: image-editing
+subject: general
+tool: ChatGPT
+tags:
+  - "portrait"
+  - "photography"
+  - "chatgpt"
+trending: false
 date: 2026-08-11T15:01
 ---

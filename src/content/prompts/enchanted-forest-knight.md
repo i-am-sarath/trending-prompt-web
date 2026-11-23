@@ -1,5 +1,6 @@
 ---
 title: Enchanted Forest Knight
+description: "Turn an uploaded portrait into a cinematic knight in an ancient enchanted forest, keeping the face recognisable."
 prompt: |-
   EPIC FANTASY KNIGHT PORTRAIT — USE THE UPLOADED PHOTO AS THE SUBJECT REFERENCE
 
@@ -19,8 +20,15 @@ prompt: |-
 
   FINAL RESULT: It should look like a production still from a live-action fantasy epic, believable and grounded. Avoid glowing eyes, cartoonish proportions, extra limbs, distorted hands, plastic-looking armor, text, logos, or watermarks.
 image: /uploads/enchanted-forest-knight.png
-category: fantasy
-tool: ChatGPT (GPT Image)
+category: image-editing
+subject: fantasy
+tool: ChatGPT
+tags:
+  - "fantasy"
+  - "portrait"
+  - "knight"
+  - "chatgpt"
+trending: false
 date: 2026-11-12T10:50
 draft: true
 ---

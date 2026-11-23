@@ -1,5 +1,6 @@
 ---
 title: Golden Hour Café Motion Portrait
+description: "Restyle an uploaded portrait as a cinematic golden-hour scene inside a luxury café."
 prompt: |-
   Transform the uploaded reference image into a dreamy, cinematic portrait set inside a warm, elegant luxury café during golden hour. Preserve the subject’s recognizable facial features, hairstyle, identity, natural skin tone, and overall expression while enhancing the environment, lighting, and photographic atmosphere.
 
@@ -17,7 +18,15 @@ prompt: |-
 
   FINAL RESULT: Create an ultra-realistic photograph that feels like a professionally captured cinematic editorial moment, combining sharp subject detail with artistic rotational movement in the environment. Avoid excessive retouching, plastic-looking skin, exaggerated effects, distorted anatomy, artificial facial changes, text, logos, or watermarks.
 image: /uploads/ChatGPT Image Aug 11, 2026, 03_59_59 PM.png
-category: portrait
-tool: ''
+category: image-editing
+subject: portrait
+tool: ChatGPT
+tags:
+  - "portrait"
+  - "golden hour"
+  - "fashion"
+  - "café"
+  - "chatgpt"
+trending: false
 date: 2026-08-11T16:00
 ---

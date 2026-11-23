@@ -1,5 +1,6 @@
 ---
 title: Red Noir Cinematic Portrait
+description: "Restyle an uploaded portrait with cinematic red noir lighting."
 prompt: |-
   CINEMATIC RED-LIT PORTRAIT — USE THE UPLOADED PHOTO AS THE SUBJECT REFERENCE
 
@@ -19,7 +20,15 @@ prompt: |-
 
   FINAL RESULT: The image should look like an authentic low-light photograph captured with practical red lighting rather than an artificial digital effect. Avoid excessive skin smoothing, exaggerated glow, distorted facial features, text, logos, or watermarks.
 image: /uploads/ChatGPT Image Aug 11, 2026, 02_40_49 PM.png
-category: portrait
-tool: ''
+category: image-editing
+subject: portrait
+tool: ChatGPT
+tags:
+  - "portrait"
+  - "fashion"
+  - "lighting"
+  - "photography"
+  - "chatgpt"
+trending: false
 date: 2026-08-11T14:41
 ---

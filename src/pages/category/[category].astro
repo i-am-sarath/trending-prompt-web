@@ -1,98 +1,121 @@
 ---
-import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import PromptCard from '../../components/PromptCard.astro';
-import CategoryNav from '../../components/CategoryNav.astro';
-import { formatDate } from '../../lib/prompt';
-import { SITE } from '../../lib/site';
+import FilterableGrid from '../../components/FilterableGrid.astro';
+import { promptsInHub, publishedPosts, publishedPrompts, subjectsOf } from '../../lib/content';
+import { excerpt, isoDate } from '../../lib/prompt';
+import { absolute, SITE } from '../../lib/site';
+import { HUBS, categoryLabel, hubBySlug, isHubSlug, subjectLabel } from '../../lib/taxonomy';
 
 export async function getStaticPaths() {
-  const prompts = await getCollection('prompts', ({ data }) => !data.draft);
-  const categories = [...new Set(prompts.map((p) => p.data.category))];
-  return categories.map((category) => ({
-    params: { category },
-    props: {
-      entries: prompts
-        .filter((p) => p.data.category === category)
-        .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf()),
-    },
-  }));
+  const prompts = await publishedPrompts();
+  const subjects = subjectsOf(prompts).filter((subject) => !isHubSlug(subject));
+  return [
+    ...HUBS.map((hub) => ({ params: { category: hub.slug } })),
+    ...subjects.map((subject) => ({ params: { category: subject } })),
+  ];
 }
 
-const { category } = Astro.params;
-const { entries } = Astro.props;
+const category = Astro.params.category;
+if (!category) throw new Error('Missing category');
 
-// Built from the entries themselves, so each category page carries its own text
-// rather than the same boilerplate with a word swapped.
-const tools = [...new Set(entries.map((e) => e.data.tool).filter(Boolean))];
-const oldest = entries[entries.length - 1];
-const newest = entries[0];
+const prompts = await publishedPrompts();
+const posts = await publishedPosts();
+const hub = hubBySlug(category);
+const entries = hub ? promptsInHub(prompts, hub.slug) : prompts.filter((prompt) => prompt.data.subject === category);
+const label = hub?.label ?? subjectLabel(category);
+const freshStamp = prompts[0] ? isoDate(prompts[0].data.date) : '';
 
-const description = `Every ${category} AI image prompt in the trendingprompt archive — ${entries.length} tested ${
-  entries.length === 1 ? 'entry' : 'entries'
-}, each with the image it produced and one-click copy.`;
+const guideSlugs = hub?.guideSlugs ?? [];
+const guides = guideSlugs
+  .map((slug) => posts.find((post) => post.slug === slug))
+  .filter((post): post is (typeof posts)[number] => !!post);
 
+const description = hub
+  ? `${hub.lede} ${entries.length} ${entries.length === 1 ? 'prompt' : 'prompts'} on trendingprompt, each with the text and the example output.`
+  : `Every ${label.toLowerCase()} prompt in the trendingprompt archive — ${entries.length} ${
+      entries.length === 1 ? 'entry' : 'entries'
+    }, with the example image and one-click copy.`;
+
+const url = absolute(`/category/${category}/`);
 const schema = [
   {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
-    name: `${category} AI image prompts`,
+    name: `${label} AI prompts`,
     description,
-    url: `${SITE.url}/category/${category}/`,
+    url,
     isPartOf: { '@type': 'WebSite', name: SITE.name, url: SITE.url },
   },
   {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: SITE.url },
-      { '@type': 'ListItem', position: 2, name: category, item: `${SITE.url}/category/${category}/` },
+      { '@type': 'ListItem', position: 1, name: 'Home', item: absolute('/') },
+      { '@type': 'ListItem', position: 2, name: label, item: url },
     ],
   },
+  ...(entries.length
+    ? [
+        {
+          '@context': 'https://schema.org',
+          '@type': 'ItemList',
+          name: `${label} prompts`,
+          numberOfItems: entries.length,
+          itemListElement: entries.map((prompt, index) => ({
+            '@type': 'ListItem',
+            position: index + 1,
+            url: absolute(`/prompts/${prompt.slug}/`),
+            name: prompt.data.title,
+          })),
+        },
+      ]
+    : []),
 ];
 ---
 <BaseLayout
-  title={`${category} AI image prompts — trendingprompt`}
-  description={description}
-  image={entries[0]?.data.image}
+  title={`${label} AI prompts — trendingprompt`}
+  description={excerpt(description, 160)}
+  image={entries[0] ? `/media/${entries[0].slug}.jpg` : '/og-default.jpg'}
   schema={schema}
 >
   <section class="shell masthead-page">
     <nav class="crumbs" aria-label="Breadcrumb">
       <a href="/">Home</a>
       <span class="crumbs__sep" aria-hidden="true">/</span>
-      <span class="crumbs__current" aria-current="page">{category}</span>
+      <span class="crumbs__current" aria-current="page">{label}</span>
     </nav>
-
-    <h1 class="masthead-page__title">{category} prompts</h1>
-
-    <p class="lede">
-      {entries.length} tested {entries.length === 1 ? 'prompt' : 'prompts'} in {category}
-      {tools.length > 0 && <> , made with {tools.join(' and ')}</>}
-      {newest && oldest && newest.slug !== oldest.slug && (
-        <> , published between {formatDate(oldest.data.date)} and {formatDate(newest.data.date)}</>
-      )}. Each entry shows the image, the exact prompt broken into its clauses, and a copy button.
-    </p>
-
-    <div style="margin-top: 1.4rem"><CategoryNav active={category} /></div>
+    <h1 class="masthead-page__title">{label} prompts</h1>
+    <p class="lede">{hub ? hub.lede : description}</p>
+    {hub && <p class="lede lede--follow">{hub.body}</p>}
+    {!hub && (
+      <p class="lede lede--follow">
+        These sit inside the <a href="/category/image-editing/">image editing</a> hub. The topic archive stays at this URL.
+      </p>
+    )}
   </section>
 
   <section class="shell section">
-    <div class="section__head">
-      <h2 class="section__title">{entries.length} {entries.length === 1 ? 'prompt' : 'prompts'}</h2>
-      <a class="backlink" href="/"><span aria-hidden="true">←</span> Index</a>
-    </div>
-    <div class="grid">
-      {entries.map((p) => (
-        <PromptCard
-          title={p.data.title}
-          image={p.data.image}
-          category={p.data.category}
-          slug={p.slug}
-          prompt={p.data.prompt}
-          date={p.data.date}
-        />
-      ))}
-    </div>
+    {entries.length > 0 ? (
+      <FilterableGrid prompts={entries} mode="local" heading={`${entries.length} ${entries.length === 1 ? 'prompt' : 'prompts'}`} freshStamp={freshStamp} />
+    ) : (
+      <p class="empty">No prompts filed here yet. The guides below cover the same ground.</p>
+    )}
   </section>
+
+  {guides.length > 0 && (
+    <section class="shell section">
+      <div class="section__head">
+        <h2 class="section__title section__title--display">Guides</h2>
+        <a class="backlink" href="/blog">All guides</a>
+      </div>
+      <ul class="linklist">
+        {guides.map((post) => (
+          <li>
+            <a href={`/blog/${post.slug}/`}>{post.data.title}</a>
+            <span>{post.data.description}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
 </BaseLayout>

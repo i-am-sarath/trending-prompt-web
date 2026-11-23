@@ -1,0 +1,62 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import FilterableGrid from '../../components/FilterableGrid.astro';
+import { publishedPrompts, tagIndex } from '../../lib/content';
+import { isoDate } from '../../lib/prompt';
+import { absolute, SITE } from '../../lib/site';
+
+export async function getStaticPaths() {
+  const prompts = await publishedPrompts();
+  return tagIndex(prompts).map((tag) => ({ params: { tag: tag.slug } }));
+}
+
+const slug = Astro.params.tag;
+const prompts = await publishedPrompts();
+const tag = tagIndex(prompts).find((item) => item.slug === slug);
+if (!tag) throw new Error(`Missing tag ${slug}`);
+
+const freshStamp = prompts[0] ? isoDate(prompts[0].data.date) : '';
+const description = `${tag.prompts.length} ${tag.prompts.length === 1 ? 'prompt' : 'prompts'} tagged ${tag.label} on trendingprompt, with the example image and the text to copy.`;
+const url = absolute(`/tag/${tag.slug}/`);
+const thin = tag.prompts.length < 2;
+
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: `${tag.label} prompts`,
+    description,
+    url,
+    isPartOf: { '@type': 'WebSite', name: SITE.name, url: SITE.url },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: absolute('/') },
+      { '@type': 'ListItem', position: 2, name: tag.label, item: url },
+    ],
+  },
+];
+---
+<BaseLayout
+  title={`${tag.label} AI prompts — trendingprompt`}
+  description={description}
+  image={tag.prompts[0] ? `/media/${tag.prompts[0].slug}.jpg` : '/og-default.jpg'}
+  robots={thin ? 'noindex, follow' : undefined}
+  schema={schema}
+>
+  <section class="shell masthead-page">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href="/">Home</a>
+      <span class="crumbs__sep" aria-hidden="true">/</span>
+      <span class="crumbs__current" aria-current="page">{tag.label}</span>
+    </nav>
+    <h1 class="masthead-page__title">{tag.label}</h1>
+    <p class="lede">{description}</p>
+  </section>
+
+  <section class="shell section">
+    <FilterableGrid prompts={tag.prompts} mode="local" heading="Prompts" freshStamp={freshStamp} />
+  </section>
+</BaseLayout>

@@ -1,5 +1,6 @@
 ---
 title: Red Gradient Panning Silhouette
+description: "Turn an uploaded photo into a red-gradient panning silhouette with motion blur."
 prompt: |-
   CINEMATIC PANNING PORTRAIT — USE THE UPLOADED PHOTO AS THE SUBJECT REFERENCE
 
@@ -17,7 +18,14 @@ prompt: |-
 
   FINAL LOOK: Minimalist, cinematic, mysterious, and artistic while remaining convincingly photographic. Avoid excessive digital effects, distorted anatomy, text, logos, watermarks, or artificial-looking blur.
 image: /uploads/ChatGPT Image Aug 11, 2026, 04_02_30 PM.png
-category: portrait
-tool: ''
+category: image-editing
+subject: portrait
+tool: ChatGPT
+tags:
+  - "portrait"
+  - "fashion"
+  - "photography"
+  - "chatgpt"
+trending: false
 date: 2026-08-11T16:02
 ---

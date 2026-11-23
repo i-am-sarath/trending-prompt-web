@@ -5,6 +5,10 @@
  * Display only — the copy and download actions always use the original string.
  */
 export function toClauses(prompt: string): string[] {
+  // Multi-line prompts are written as labelled sections, not comma chains.
+  // Splitting those on commas breaks sentences. Keep the clause view for the
+  // single-line "subject, light, lens" form only.
+  if (prompt.includes('\n')) return [];
   return prompt
     .split(',')
     .map((clause) => clause.trim())

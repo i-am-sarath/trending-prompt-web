@@ -1,16 +1,18 @@
 ---
-import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import FilterableGrid from '../components/FilterableGrid.astro';
 import PromptCard from '../components/PromptCard.astro';
-import PromptSpecimen from '../components/PromptSpecimen.astro';
-import CategoryNav from '../components/CategoryNav.astro';
-import { formatDate } from '../lib/prompt';
-import { SITE } from '../lib/site';
+import { promptsInHub, publishedPosts, publishedPrompts } from '../lib/content';
+import { formatDate, isoDate } from '../lib/prompt';
+import { absolute, SITE } from '../lib/site';
+import { HUBS } from '../lib/taxonomy';
 
-const prompts = (await getCollection('prompts', ({ data }) => !data.draft))
-  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
-
-const [latest, ...archive] = prompts;
+const prompts = await publishedPrompts();
+const posts = (await publishedPosts()).slice(0, 4);
+const freshStamp = prompts[0] ? isoDate(prompts[0].data.date) : '';
+const trending = prompts.filter((prompt) => prompt.data.trending);
+const trendingSlugs = new Set(trending.map((prompt) => prompt.slug));
+const newest = prompts.filter((prompt) => !trendingSlugs.has(prompt.slug)).slice(0, 4);
 
 const schema = [
   {
@@ -19,87 +21,109 @@ const schema = [
     name: SITE.name,
     alternateName: SITE.legalName,
     url: SITE.url,
-    description: 'A daily gallery of AI image prompts with the images they produce.',
+    description:
+      'Copy-ready AI prompts with the images they produce, across image generation, image editing, ChatGPT, Claude, Grok, Gemini, Midjourney, and other agents.',
     publisher: { '@type': 'Organization', name: SITE.name, url: SITE.url, email: SITE.email },
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: `${SITE.url}/?q={search_term_string}`,
+      'query-input': 'required name=search_term_string',
+    },
   },
   {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
-    name: 'Latest AI image prompts',
+    name: 'AI prompts',
     numberOfItems: prompts.length,
-    itemListElement: prompts.slice(0, 20).map((p, i) => ({
+    itemListElement: prompts.slice(0, 20).map((prompt, index) => ({
       '@type': 'ListItem',
-      position: i + 1,
-      url: `${SITE.url}/prompts/${p.slug}/`,
-      name: p.data.title,
+      position: index + 1,
+      url: absolute(`/prompts/${prompt.slug}/`),
+      name: prompt.data.title,
     })),
   },
 ];
 ---
 <BaseLayout schema={schema}>
-  <section class="shell intro">
-    <p class="eyebrow">AI prompt gallery</p>
-    <h1 class="intro__title">Trending AI image prompts, one a day</h1>
-    <p class="intro__text">
-      Every entry is a generated image with the exact prompt that made it — broken into its
-      clauses so you can see how it is built, and copyable in one click. Tested across three
-      clean runs before it goes up. Craft notes are in the <a href="/blog">guides</a>.
+  <section class="shell hero">
+    <p class="eyebrow">Prompt hub</p>
+    <h1 class="hero__title">AI prompts, with the picture they made</h1>
+    <p class="lede">
+      Image generation, image editing, ChatGPT, Claude, Grok, Gemini, Midjourney, and other agents.
+      Every entry is the exact prompt plus the example output, ready to copy.
     </p>
+    <p class="hero__count">{prompts.length} prompts · <a href="/blog">guides</a></p>
   </section>
 
-  {latest ? (
-    <section class="shell drop">
-      <p class="eyebrow rise">Latest drop · {formatDate(latest.data.date)}</p>
-
-      <div class="drop__grid">
-        <a class="drop__plate rise" style="--d: 90ms" href={`/prompts/${latest.slug}`}>
-          <img
-            class="drop__img"
-            src={latest.data.image}
-            alt={latest.data.title}
-            fetchpriority="high"
-            decoding="async"
-          />
-        </a>
-
-        <div class="rise" style="--d: 180ms">
-          <h2 class="drop__title">{latest.data.title}</h2>
-          <div class="specs">
-            <a class="spec spec--link" href={`/category/${latest.data.category}`}>
-              {latest.data.category}
+  <section class="shell section" aria-labelledby="categories-heading">
+    <div class="section__head">
+      <h2 id="categories-heading" class="section__title section__title--display">Categories</h2>
+    </div>
+    <ul class="hubs">
+      {HUBS.map((hub) => {
+        const count = promptsInHub(prompts, hub.slug).length;
+        return (
+          <li>
+            <a href={`/category/${hub.slug}/`}>
+              <span class="hubs__label">{hub.label}</span>
+              <span class="hubs__count">{count} {count === 1 ? 'prompt' : 'prompts'}</span>
+              <span class="hubs__blurb">{hub.blurb}</span>
             </a>
-            {latest.data.tool && <span class="spec">{latest.data.tool}</span>}
-          </div>
-          <PromptSpecimen prompt={latest.data.prompt} filename={latest.slug} />
-        </div>
+          </li>
+        );
+      })}
+    </ul>
+  </section>
+
+  {trending.length > 0 && (
+    <section class="shell section" id="trending" data-curated aria-labelledby="trending-heading">
+      <div class="section__head">
+        <h2 id="trending-heading" class="section__title section__title--display">Trending</h2>
+        <span class="section__count">{trending.length}</span>
       </div>
-    </section>
-  ) : (
-    <section class="shell drop">
-      <p class="eyebrow">No drops yet</p>
-      <p class="empty" style="margin-top: 1.4rem">
-        The archive is empty. Publish the first prompt from /admin and it appears here.
-      </p>
+      <p class="section__lede">Prompts people are copying right now.</p>
+      <div class="grid">
+        {trending.map((prompt, index) => (
+          <PromptCard prompt={prompt} eager={index === 0} fresh={isoDate(prompt.data.date) === freshStamp} />
+        ))}
+      </div>
     </section>
   )}
 
-  {archive.length > 0 && (
+  {newest.length > 0 && (
+    <section class="shell section" id="new" data-curated aria-labelledby="new-heading">
+      <div class="section__head">
+        <h2 id="new-heading" class="section__title section__title--display">New</h2>
+        <span class="section__count">{newest.length}</span>
+      </div>
+      <p class="section__lede">Recently added, after the trending row.</p>
+      <div class="grid">
+        {newest.map((prompt) => (
+          <PromptCard prompt={prompt} fresh={isoDate(prompt.data.date) === freshStamp} />
+        ))}
+      </div>
+    </section>
+  )}
+
+  <section class="shell section">
+    <FilterableGrid prompts={prompts} mode="all" heading="All prompts" freshStamp={freshStamp} />
+  </section>
+
+  {posts.length > 0 && (
     <section class="shell section">
       <div class="section__head">
-        <h2 class="section__title">Archive</h2>
-        <span class="section__count">{archive.length} {archive.length === 1 ? 'prompt' : 'prompts'}</span>
+        <h2 class="section__title section__title--display">From the blog</h2>
+        <a class="backlink" href="/blog">All guides</a>
       </div>
-      <div style="margin-bottom: 1.5rem"><CategoryNav /></div>
-      <div class="grid">
-        {archive.map((p) => (
-          <PromptCard
-            title={p.data.title}
-            image={p.data.image}
-            category={p.data.category}
-            slug={p.slug}
-            prompt={p.data.prompt}
-            date={p.data.date}
-          />
+      <div class="posts">
+        {posts.map((post) => (
+          <a class="postrow" href={`/blog/${post.slug}/`}>
+            <span class="postrow__meta">{formatDate(post.data.date)}</span>
+            <span>
+              <span class="postrow__title">{post.data.title}</span>
+              <span class="postrow__dek">{post.data.description}</span>
+            </span>
+          </a>
         ))}
       </div>
     </section>

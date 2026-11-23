@@ -1,11 +1,9 @@
 ---
-import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PromptCard from '../components/PromptCard.astro';
+import { publishedPrompts } from '../lib/content';
 
-const prompts = (await getCollection('prompts', ({ data }) => !data.draft))
-  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
-  .slice(0, 4);
+const prompts = (await publishedPrompts()).slice(0, 4);
 ---
 <BaseLayout
   title="Page not found — trendingprompt"
@@ -27,16 +25,7 @@ const prompts = (await getCollection('prompts', ({ data }) => !data.draft))
         <a class="backlink" href="/">Index</a>
       </div>
       <div class="grid">
-        {prompts.map((p) => (
-          <PromptCard
-            title={p.data.title}
-            image={p.data.image}
-            category={p.data.category}
-            slug={p.slug}
-            prompt={p.data.prompt}
-            date={p.data.date}
-          />
-        ))}
+        {prompts.map((prompt) => <PromptCard prompt={prompt} />)}
       </div>
     </section>
   )}

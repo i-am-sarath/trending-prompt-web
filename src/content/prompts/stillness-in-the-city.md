@@ -1,5 +1,6 @@
 ---
 title: Stillness in the City
+description: "Place an uploaded portrait in a quiet, cinematic city fashion photograph."
 prompt: |-
   CINEMATIC URBAN FASHION PORTRAIT — USE THE UPLOADED PHOTO AS THE SUBJECT REFERENCE
 
@@ -19,7 +20,15 @@ prompt: |-
 
   NEGATIVE DETAILS: No text, logos, watermarks, artificial objects, exaggerated effects, or unnecessary visual elements.
 image: /uploads/ChatGPT Image Aug 11, 2026, 01_55_55 PM.png
-category: sci-fi
-tool: GPT
+category: image-editing
+subject: sci-fi
+tool: ChatGPT
+tags:
+  - "portrait"
+  - "fashion"
+  - "city"
+  - "sci-fi"
+  - "chatgpt"
+trending: false
 date: 2026-08-11T13:50
 ---

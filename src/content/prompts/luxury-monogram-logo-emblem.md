@@ -1,5 +1,6 @@
 ---
 title: Luxury Monogram Logo Emblem
+description: "Design a from-scratch luxury monogram logo, foil-stamped in gold on black paper."
 prompt: |-
   PREMIUM PERSONAL MONOGRAM LOGO — REPLACE [INITIALS] AND [NAME] WITH YOUR OWN
 
@@ -17,8 +18,15 @@ prompt: |-
 
   FINAL RESULT: A polished, premium brand mark that could be printed on a business card, a shopping bag, or a wax seal. Exactly the requested letters and name, correctly spelled. No other text, no real brand logos, no clip-art, and no watermarks.
 image: /uploads/luxury-monogram-logo-emblem.png
-category: logo
-tool: ChatGPT (GPT Image)
+category: image-generation
+subject: logo
+tool: ChatGPT
+tags:
+  - "logo"
+  - "branding"
+  - "monogram"
+  - "chatgpt"
+trending: false
 date: 2026-11-12T11:10
 draft: true
 ---

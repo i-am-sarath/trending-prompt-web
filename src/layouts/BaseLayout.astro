@@ -1,34 +1,51 @@
 ---
 import '../styles/global.css';
-import { SITE } from '../lib/site';
+import { SITE, absolute } from '../lib/site';
+import { HUBS } from '../lib/taxonomy';
 
 interface Props {
   title?: string;
   description?: string;
+  /** Optimized image used for Twitter and as the Open Graph image when no pin is set. */
   image?: string;
-  url?: string;
+  /** Tall 2:3 image. When set, Open Graph points here so Pinterest gets the pin. */
+  pinImage?: string;
+  ogWidth?: number;
+  ogHeight?: number;
+  imageAlt?: string;
   ogType?: 'website' | 'article';
-  /** JSON-LD graph for this page. Rendered verbatim into a ld+json script. */
   schema?: Record<string, unknown> | Record<string, unknown>[];
   publishedTime?: string;
   modifiedTime?: string;
+  author?: string;
+  robots?: string;
+  preloadImage?: string;
 }
 
 const {
-  title = 'Trending Prompt — AI prompt gallery, one drop a day',
-  description = 'A daily gallery of AI image prompts with the images they produce. See the picture, take the prompt — copy or download it in one click.',
+  title = 'Trending Prompt — AI prompts for ChatGPT, Claude, Gemini, Grok, and Midjourney',
+  description = 'Copy-ready AI prompts with the images they produce. Image generation, image editing, ChatGPT, Claude, Grok, Gemini, Midjourney, and other agents.',
   image = '/og-default.jpg',
-  url = Astro.url.href,
+  pinImage,
+  ogWidth,
+  ogHeight,
+  imageAlt,
   ogType = 'website',
   schema,
   publishedTime,
   modifiedTime,
+  author,
+  robots = 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1',
+  preloadImage,
 } = Astro.props;
 
+const canonical = absolute(Astro.url.pathname);
 const here = Astro.url.pathname.replace(/\/+$/, '') || '/';
+const ogImage = new URL(pinImage ?? image, Astro.site ?? SITE.url);
+const twitterImage = new URL(image, Astro.site ?? SITE.url);
+const alt = imageAlt ?? title;
 
 const nav = [
-  { href: '/', label: 'Index' },
   { href: '/blog', label: 'Blog' },
   { href: '/about', label: 'About' },
 ];
@@ -40,6 +57,9 @@ const legal = [
   { href: '/terms', label: 'Terms' },
   { href: '/contact', label: 'Contact' },
 ];
+
+const current = (href: string) =>
+  here === href.replace(/\/+$/, '') || (href !== '/' && here.startsWith(href.replace(/\/+$/, '')));
 ---
 <!doctype html>
 <html lang="en">
@@ -50,43 +70,41 @@ const legal = [
     <meta name="description" content={description} />
     <meta name="theme-color" content="#efefeb" />
     <meta name="google-site-verification" content="d9NUAGYjjGq9waLpUZjppUGVdi9r2f6Eej-fB0jeEXw" />
-    <!-- Let Google use full-size image previews and untruncated snippets -->
-    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="robots" content={robots} />
 
-    <!-- Open Graph / Twitter: makes shared links show the image -->
     <meta property="og:type" content={ogType} />
     <meta property="og:site_name" content={SITE.name} />
     <meta property="og:locale" content="en_GB" />
-    <meta property="og:image:alt" content={title} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={new URL(image, Astro.site)} />
-    <meta property="og:url" content={url} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:alt" content={alt} />
+    {ogWidth && <meta property="og:image:width" content={String(ogWidth)} />}
+    {ogHeight && <meta property="og:image:height" content={String(ogHeight)} />}
+    {pinImage && <meta name="pinterest-rich-pin" content="true" />}
     {publishedTime && <meta property="article:published_time" content={publishedTime} />}
     {modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
+    {author && <meta property="article:author" content={author} />}
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={new URL(image, Astro.site)} />
+    <meta name="twitter:image" content={twitterImage} />
+    <meta name="twitter:image:alt" content={alt} />
 
-    <link rel="canonical" href={url} />
+    <link rel="canonical" href={canonical} />
     <link rel="icon" href="/favicon.svg" />
     <link rel="sitemap" href="/sitemap.xml" />
     <link rel="alternate" type="application/rss+xml" title="trendingprompt guides" href="/rss.xml" />
+    {preloadImage && <link rel="preload" as="image" href={preloadImage} fetchpriority="high" />}
 
     <link rel="preload" href="/fonts/anybody-latin-1.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/instrument-sans-latin-1.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/dm-mono-latin-3.woff2" as="font" type="font/woff2" crossorigin />
 
-    {/* Marks scripting as available before first paint, so progressive
-        enhancements (the collapsed prompt panel) can style themselves up front
-        instead of flashing their unenhanced state. */}
     <script is:inline>document.documentElement.classList.add('js');</script>
 
     {schema && <script type="application/ld+json" set:html={JSON.stringify(schema)} />}
 
-    {/* Google Analytics — production builds only, so local development does not
-        pollute the property with your own page views. */}
     {import.meta.env.PROD && (
       <Fragment>
         <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-2H2QRC4DSS"></script>
@@ -98,11 +116,6 @@ const legal = [
         </script>
       </Fragment>
     )}
-
-    <!-- AdSense: uncomment and set client id AFTER approval -->
-    <!--
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
-    -->
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -110,29 +123,136 @@ const legal = [
     <header class="masthead">
       <div class="shell masthead__inner">
         <a href="/" class="wordmark">trendingprompt</a>
+        <form class="site-search" action="/" method="get" role="search">
+          <label class="sr-only" for="site-q">Search prompts</label>
+          <input id="site-q" type="search" name="q" placeholder="Search prompts, tools, tags" autocomplete="off" enterkeyhint="search" />
+        </form>
         <nav class="masthead__nav" aria-label="Main">
           {nav.map((item) => (
-            <a
-              class="navlink"
-              href={item.href}
-              aria-current={here === item.href.replace(/\/+$/, '') || (item.href === '/blog' && here.startsWith('/blog')) ? 'page' : undefined}
-            >
-              {item.label}
-            </a>
+            <a class="navlink" href={item.href} aria-current={current(item.href) ? 'page' : undefined}>{item.label}</a>
           ))}
         </nav>
+        <details class="nav-drawer">
+          <summary>Menu</summary>
+          <div class="nav-drawer__panel">
+            <a href="/blog">Blog</a>
+            <a href="/about">About</a>
+            <a href="/contact">Contact</a>
+            <a href="/#all">All prompts</a>
+          </div>
+        </details>
       </div>
     </header>
+
+    <div class="shell rail-wrap">
+      <nav class="rail" aria-label="Categories">
+        {HUBS.map((hub) => (
+          <a href={`/category/${hub.slug}/`} aria-current={here === `/category/${hub.slug}` ? 'page' : undefined}>
+            {hub.label}
+          </a>
+        ))}
+      </nav>
+    </div>
 
     <main id="main"><slot /></main>
 
     <footer class="site-footer">
-      <div class="shell footer__inner">
-        <nav class="footer__links" aria-label="Footer">
-          {legal.map((item) => <a class="footer__link" href={item.href}>{item.label}</a>)}
+      <div class="shell">
+        <nav class="footer__hubs" aria-label="Categories">
+          {HUBS.map((hub) => <a href={`/category/${hub.slug}/`}>{hub.label}</a>)}
         </nav>
-        <p class="footer__note">© 2026 {SITE.legalName} · {SITE.tagline}</p>
+        <div class="footer__inner">
+          <nav class="footer__links" aria-label="Footer">
+            {legal.map((item) => <a class="footer__link" href={item.href}>{item.label}</a>)}
+          </nav>
+          <p class="footer__note">© 2026 {SITE.legalName}</p>
+        </div>
       </div>
     </footer>
+
+    <script>
+      const siteQ = document.querySelector<HTMLInputElement>('#site-q');
+
+      const queryOf = (root: HTMLElement) => {
+        if (root.dataset.browser === 'all') return siteQ?.value ?? '';
+        return root.querySelector<HTMLInputElement>('[data-filter-q]')?.value ?? '';
+      };
+
+      const applyBrowser = (root: HTMLElement) => {
+        const q = queryOf(root).trim().toLowerCase();
+        const tool = root.querySelector<HTMLSelectElement>('[data-filter-tool]')?.value ?? '';
+        const hub = root.querySelector<HTMLSelectElement>('[data-filter-hub]')?.value ?? '';
+        const subject = root.querySelector<HTMLSelectElement>('[data-filter-subject]')?.value ?? '';
+        let shown = 0;
+        root.querySelectorAll<HTMLElement>('[data-card]').forEach((card) => {
+          const hay = card.dataset.search ?? '';
+          const ok =
+            (!q || hay.includes(q)) &&
+            (!tool || card.dataset.tool === tool) &&
+            (!hub || (card.dataset.hubs ?? '').split(' ').includes(hub)) &&
+            (!subject || card.dataset.subject === subject);
+          card.hidden = !ok;
+          if (ok) shown += 1;
+        });
+        const count = root.querySelector('[data-count]');
+        if (count) count.textContent = String(shown);
+        const empty = root.querySelector<HTMLElement>('[data-empty]');
+        if (empty) empty.hidden = shown !== 0;
+      };
+
+      const applyAll = () => {
+        document.querySelectorAll<HTMLElement>('[data-browser]').forEach(applyBrowser);
+        const all = document.querySelector<HTMLElement>('[data-browser="all"]');
+        if (!all) return;
+        const tool = all.querySelector<HTMLSelectElement>('[data-filter-tool]')?.value ?? '';
+        const hub = all.querySelector<HTMLSelectElement>('[data-filter-hub]')?.value ?? '';
+        const subject = all.querySelector<HTMLSelectElement>('[data-filter-subject]')?.value ?? '';
+        const active = Boolean(siteQ?.value.trim() || tool || hub || subject);
+        document.body.dataset.filtering = active ? 'true' : 'false';
+      };
+
+      const params = new URLSearchParams(location.search);
+      if (siteQ && params.get('q')) siteQ.value = params.get('q') ?? '';
+
+      siteQ?.addEventListener('input', applyAll);
+      siteQ?.form?.addEventListener('submit', (event) => {
+        if (!document.querySelector('[data-browser="all"]')) return;
+        event.preventDefault();
+        const url = new URL(location.href);
+        const value = siteQ.value.trim();
+        if (value) url.searchParams.set('q', value);
+        else url.searchParams.delete('q');
+        history.replaceState(null, '', url);
+        applyAll();
+        document.getElementById('all')?.scrollIntoView({ block: 'start' });
+      });
+
+      document
+        .querySelectorAll<HTMLElement>('[data-filter-q], [data-filter-tool], [data-filter-hub], [data-filter-subject]')
+        .forEach((el) => {
+          el.addEventListener('input', applyAll);
+          el.addEventListener('change', applyAll);
+        });
+
+      document.querySelectorAll<HTMLButtonElement>('[data-clear]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const root = btn.closest<HTMLElement>('[data-browser]');
+          root?.querySelectorAll('select').forEach((select) => {
+            select.value = '';
+          });
+          const local = root?.querySelector<HTMLInputElement>('[data-filter-q]');
+          if (local) local.value = '';
+          if (root?.dataset.browser === 'all' && siteQ) {
+            siteQ.value = '';
+            const url = new URL(location.href);
+            url.searchParams.delete('q');
+            history.replaceState(null, '', url);
+          }
+          applyAll();
+        });
+      });
+
+      applyAll();
+    </script>
   </body>
 </html>

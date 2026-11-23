@@ -1,84 +1,167 @@
 ---
-import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PromptCard from '../../components/PromptCard.astro';
 import PromptSpecimen from '../../components/PromptSpecimen.astro';
+import PinterestSave from '../../components/PinterestSave.astro';
+import { publishedPosts, publishedPrompts, relatedPosts, relatedPrompts, subjectsOf, usesGeneratedPin } from '../../lib/content';
+import { displaySize, mediaUrl, orientedSize, PIN_SIZE, pinUrl } from '../../lib/images';
 import { excerpt, formatDate, isoDate } from '../../lib/prompt';
-import { SITE } from '../../lib/site';
+import { absolute, SITE } from '../../lib/site';
+import { categoryLabel, tagHref, tagSlug, toolHub } from '../../lib/taxonomy';
 
 export async function getStaticPaths() {
-  const prompts = (await getCollection('prompts', ({ data }) => !data.draft))
-    .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
-
-  return prompts.map((p) => ({
-    params: { slug: p.slug },
-    props: {
-      entry: p,
-      related: prompts
-        .filter((other) => other.slug !== p.slug && other.data.category === p.data.category)
-        .slice(0, 3),
-    },
-  }));
+  const prompts = await publishedPrompts();
+  return prompts.map((entry) => ({ params: { slug: entry.slug } }));
 }
 
-const { entry, related } = Astro.props;
-const { title, prompt, image, category, tool, date } = entry.data;
+const slug = Astro.params.slug;
+const prompts = await publishedPrompts();
+const posts = await publishedPosts();
+const entry = prompts.find((prompt) => prompt.slug === slug);
+if (!entry) throw new Error(`Missing prompt ${slug}`);
+
+const { title, prompt, description, image, category, tool, subject, tags, date, credit, trending, pinImage } = entry.data;
 const { Content } = await entry.render();
 const hasNotes = entry.body.trim().length > 0;
+const related = relatedPrompts(entry, prompts);
+const guides = relatedPosts(entry, posts);
+const subjects = subjectsOf(prompts);
+const hubLabel = categoryLabel(category);
+const toolSlug = toolHub(tool);
+const pageUrl = absolute(`/prompts/${entry.slug}/`);
+const display = await displaySize(image);
+const showPin = category === 'image-editing' || Boolean(pinImage);
+const pinSrc = pinImage ?? (usesGeneratedPin(entry.data) ? pinUrl(entry.slug) : undefined);
+let ogWidth = display.width;
+let ogHeight = display.height;
+if (showPin && pinSrc) {
+  if (pinImage) {
+    const custom = await orientedSize(pinImage);
+    ogWidth = custom.width;
+    ogHeight = custom.height;
+  } else {
+    ogWidth = PIN_SIZE.width;
+    ogHeight = PIN_SIZE.height;
+  }
+}
+const pinText = `${title}. ${description} ${excerpt(prompt, 160)}`.slice(0, 500);
+const fresh = prompts[0] ? isoDate(date) === isoDate(prompts[0].data.date) : false;
 
-const url = `${SITE.url}/prompts/${entry.slug}/`;
 const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'CreativeWork',
+    name: title,
+    headline: title,
+    description,
+    text: prompt,
+    keywords: tags.join(', '),
+    datePublished: isoDate(date),
+    inLanguage: 'en',
+    isAccessibleForFree: true,
+    image: [absolute(mediaUrl(entry.slug)), ...(pinSrc ? [absolute(pinSrc)] : [])],
+    thumbnailUrl: absolute(mediaUrl(entry.slug)),
+    creditText: credit,
+    creator: { '@type': 'Organization', name: SITE.name, url: SITE.url },
+    publisher: { '@type': 'Organization', name: SITE.name, url: SITE.url },
+    mainEntityOfPage: pageUrl,
+    ...(tool ? { about: { '@type': 'SoftwareApplication', name: tool } } : {}),
+  },
   {
     '@context': 'https://schema.org',
     '@type': 'ImageObject',
     name: title,
-    description: excerpt(prompt, 200),
-    contentUrl: `${SITE.url}${image}`,
+    description,
+    contentUrl: absolute(mediaUrl(entry.slug)),
+    width: display.width,
+    height: display.height,
     datePublished: isoDate(date),
-    ...(tool ? { creditText: tool } : {}),
+    creditText: credit ?? tool,
     isPartOf: { '@type': 'WebSite', name: SITE.name, url: SITE.url },
   },
   {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: SITE.url },
-      { '@type': 'ListItem', position: 2, name: category, item: `${SITE.url}/category/${category}/` },
-      { '@type': 'ListItem', position: 3, name: title, item: url },
+      { '@type': 'ListItem', position: 1, name: 'Home', item: absolute('/') },
+      { '@type': 'ListItem', position: 2, name: hubLabel, item: absolute(`/category/${category}/`) },
+      { '@type': 'ListItem', position: 3, name: title, item: pageUrl },
     ],
   },
 ];
 ---
 <BaseLayout
   title={`${title} — AI prompt for ${tool ?? 'image generation'}`}
-  description={excerpt(prompt, 155)}
-  image={image}
+  description={excerpt(description, 155)}
+  image={mediaUrl(entry.slug)}
+  pinImage={showPin ? pinSrc : undefined}
+  ogWidth={ogWidth}
+  ogHeight={ogHeight}
+  imageAlt={`${title} example output`}
+  ogType="article"
+  publishedTime={isoDate(date)}
+  author={SITE.name}
+  preloadImage={mediaUrl(entry.slug)}
   schema={schema}
 >
   <article class="shell entry">
     <nav class="crumbs" aria-label="Breadcrumb">
       <a href="/">Home</a>
       <span class="crumbs__sep" aria-hidden="true">/</span>
-      <a href={`/category/${category}`}>{category}</a>
+      <a href={`/category/${category}/`}>{hubLabel}</a>
       <span class="crumbs__sep" aria-hidden="true">/</span>
       <span class="crumbs__current" aria-current="page">{title}</span>
     </nav>
 
     <div class="entry__grid">
-      <figure class="entry__media rise">
+      <figure class="entry__media">
         <div class="plinth">
-          <img class="plinth__img" src={image} alt={title} fetchpriority="high" decoding="async" />
+          <img
+            class="plinth__img"
+            src={mediaUrl(entry.slug)}
+            alt={`${title} example output`}
+            width={display.width}
+            height={display.height}
+            fetchpriority="high"
+            decoding="async"
+            data-pin-media={pinSrc ? absolute(pinSrc) : undefined}
+            data-pin-url={pageUrl}
+            data-pin-description={pinText}
+          />
         </div>
+        <figcaption class="entry__caption">Example output{tool ? ` · ${tool}` : ''}</figcaption>
       </figure>
 
-      <div class="rise" style="--d: 110ms">
+      <div>
         <h1 class="entry__title">{title}</h1>
+        <p class="lede lede--tight">{description}</p>
         <div class="specs">
-          <a class="spec spec--link" href={`/category/${category}`}>{category}</a>
-          {tool && <span class="spec">{tool}</span>}
+          <a class="spec spec--link" href={`/category/${category}/`}>{hubLabel}</a>
+          {toolSlug && <a class="spec spec--link" href={`/category/${toolSlug}/`}>{tool}</a>}
+          {subject && <a class="spec spec--link" href={`/category/${subject}/`}>{subject}</a>}
           <span class="spec">{formatDate(date)}</span>
+          {fresh && <span class="badge badge--new">New</span>}
+          {trending && <span class="badge">Trending</span>}
         </div>
-        <PromptSpecimen prompt={prompt} filename={entry.slug} collapsible={false} />
+        {tags.length > 0 && (
+          <div class="tags tags--start">
+            {tags
+              .filter((tag) => {
+                const slug = tagSlug(tag);
+                return slug !== subject && slug !== category && slug !== toolSlug;
+              })
+              .map((tag) => (
+                <a class="spec spec--link" href={tagHref(tag, subjects)}>{tag}</a>
+              ))}
+          </div>
+        )}
+        {credit && <p class="credit">Credit: {credit}</p>}
+
+        <PromptSpecimen prompt={prompt} filename={entry.slug} collapsible={false}>
+          {showPin && pinSrc && (
+            <PinterestSave slot="actions" pageUrl={pageUrl} mediaUrl={absolute(pinSrc)} description={pinText} />
+          )}
+        </PromptSpecimen>
 
         {hasNotes && (
           <section class="notes">
@@ -93,21 +176,29 @@ const schema = [
   {related.length > 0 && (
     <section class="shell section">
       <div class="section__head">
-        <h2 class="section__title">More in {category}</h2>
-        <a class="backlink" href={`/category/${category}`}>See all</a>
+        <h2 class="section__title section__title--display">Related prompts</h2>
+        <a class="backlink" href={`/category/${category}/`}>More in {hubLabel}</a>
       </div>
       <div class="grid">
-        {related.map((p) => (
-          <PromptCard
-            title={p.data.title}
-            image={p.data.image}
-            category={p.data.category}
-            slug={p.slug}
-            prompt={p.data.prompt}
-            date={p.data.date}
-          />
-        ))}
+        {related.map((promptEntry) => <PromptCard prompt={promptEntry} />)}
       </div>
+    </section>
+  )}
+
+  {guides.length > 0 && (
+    <section class="shell section">
+      <div class="section__head">
+        <h2 class="section__title section__title--display">From the blog</h2>
+        <a class="backlink" href="/blog">All guides</a>
+      </div>
+      <ul class="linklist">
+        {guides.map((post) => (
+          <li>
+            <a href={`/blog/${post.slug}/`}>{post.data.title}</a>
+            <span>{post.data.description}</span>
+          </li>
+        ))}
+      </ul>
     </section>
   )}
 </BaseLayout>
