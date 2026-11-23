@@ -1,5 +1,3 @@
-import { existsSync } from 'node:fs';
-import path from 'node:path';
 import manifest from '../generated/media.json';
 
 export type MediaRecord = {
@@ -24,9 +22,4 @@ export function mediaUrl(slug: string): string {
 
 export function pinUrl(slug: string): string {
   return `/pins/${slug}.jpg`;
-}
-
-export function publicFileExists(urlPath: string | undefined): boolean {
-  if (!urlPath || urlPath.includes('..')) return false;
-  return existsSync(path.join(process.cwd(), 'public', urlPath.replace(/^\//, '')));
 }

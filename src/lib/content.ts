@@ -1,5 +1,5 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
-import { mediaRecord, publicFileExists } from './images';
+import { mediaRecord } from './images';
 import { inHub, isHubSlug, tagSlug, type HubSlug } from './taxonomy';
 
 export type PromptEntry = CollectionEntry<'prompts'>;
@@ -14,24 +14,20 @@ export async function allPrompts(): Promise<PromptEntry[]> {
 export async function publishedPrompts(): Promise<PromptEntry[]> {
   const prompts = (await allPrompts()).filter((prompt) => !prompt.data.draft);
   for (const prompt of prompts) {
-    if (!publicFileExists(prompt.data.image)) {
+    const media = mediaRecord(prompt.slug);
+    if (!media) {
       throw new Error(
-        `Published prompt "${prompt.slug}" is missing its image file (${prompt.data.image}). Add the file under public/ or set draft: true.`
+        `Published prompt "${prompt.slug}" has no generated image. Run: npm install --no-save sharp && node scripts/generate-images.mjs`
       );
     }
-    if (!publicFileExists(`/media/${prompt.slug}.jpg`) || !mediaRecord(prompt.slug)) {
+    if (prompt.data.category === 'image-editing' && !prompt.data.pinImage && !media.pin) {
       throw new Error(
-        `Published prompt "${prompt.slug}" has no display image at public/media/${prompt.slug}.jpg. Run: npm install --no-save sharp && node scripts/generate-images.mjs`
+        `Published prompt "${prompt.slug}" has no Pinterest image. Run node scripts/generate-images.mjs.`
       );
     }
-    if (prompt.data.category === 'image-editing' && !prompt.data.pinImage && !publicFileExists(`/pins/${prompt.slug}.jpg`)) {
+    if (prompt.data.pinImage && media.pinImage !== prompt.data.pinImage) {
       throw new Error(
-        `Published prompt "${prompt.slug}" has no Pinterest image at public/pins/${prompt.slug}.jpg. Run node scripts/generate-images.mjs.`
-      );
-    }
-    if (prompt.data.pinImage && !publicFileExists(prompt.data.pinImage)) {
-      throw new Error(
-        `Published prompt "${prompt.slug}" points pinImage at ${prompt.data.pinImage}, and that file is not in public/.`
+        `Published prompt "${prompt.slug}" pinImage does not match src/generated/media.json. Run node scripts/generate-images.mjs.`
       );
     }
     if (prompt.data.subject && isHubSlug(prompt.data.subject)) {
