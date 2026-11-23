@@ -1,0 +1,74 @@
+---
+import type { PromptEntry } from '../lib/content';
+import { isoDate } from '../lib/prompt';
+import { HUBS, categoryLabel, inHub } from '../lib/taxonomy';
+import PromptCard from './PromptCard.astro';
+
+interface Props {
+  prompts: PromptEntry[];
+  /** "all" is the homepage catalog and follows the header search. "local" filters in place. */
+  mode: 'all' | 'local';
+  heading: string;
+  freshStamp?: string;
+}
+
+const { prompts, mode, heading, freshStamp } = Astro.props;
+const tools = [...new Set(prompts.map((prompt) => prompt.data.tool).filter(Boolean))].sort();
+const subjects = [...new Set(prompts.map((prompt) => prompt.data.subject).filter((s): s is string => !!s))].sort();
+const hubs = HUBS.filter((hub) => prompts.some((prompt) => inHub(prompt.data, hub.slug)));
+---
+<div class="browser" data-browser={mode} id={mode === 'all' ? 'all' : undefined}>
+  <div class="section__head">
+    <h2 class="section__title section__title--display">{heading}</h2>
+    <span class="section__count"><span data-count>{prompts.length}</span> shown</span>
+  </div>
+
+  <div class="filters">
+    {mode === 'local' && (
+      <label class="filters__search">
+        <span class="sr-only">Filter these prompts</span>
+        <input data-filter-q type="search" placeholder="Filter these prompts" autocomplete="off" />
+      </label>
+    )}
+    {mode === 'all' && (
+      <>
+        <label>
+          <span class="sr-only">Category</span>
+          <select data-filter-hub>
+            <option value="">All categories</option>
+            {hubs.map((hub) => <option value={hub.slug}>{hub.label}</option>)}
+          </select>
+        </label>
+        <label>
+          <span class="sr-only">Tool</span>
+          <select data-filter-tool>
+            <option value="">All tools</option>
+            {tools.map((tool) => <option value={tool}>{tool}</option>)}
+          </select>
+        </label>
+        {subjects.length > 0 && (
+          <label>
+            <span class="sr-only">Topic</span>
+            <select data-filter-subject>
+              <option value="">All topics</option>
+              {subjects.map((subject) => <option value={subject}>{categoryLabel(subject)}</option>)}
+            </select>
+          </label>
+        )}
+      </>
+    )}
+    <button class="btn btn--ghost btn--small" type="button" data-clear>Clear</button>
+  </div>
+
+  <p class="empty" data-empty hidden>Nothing matches that filter.</p>
+
+  <div class="grid">
+    {prompts.map((prompt, index) => (
+      <PromptCard
+        prompt={prompt}
+        eager={mode === 'all' && index === 0}
+        fresh={freshStamp ? isoDate(prompt.data.date) === freshStamp : false}
+      />
+    ))}
+  </div>
+</div>

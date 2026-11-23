@@ -1,5 +1,6 @@
 ---
 title: Collectible Action Figure — Blister Pack Edition
+description: "Turn an uploaded photo into a collectible action figure sealed in a blister pack."
 prompt: |-
   COLLECTIBLE ACTION FIGURE PRODUCT PORTRAIT — USE THE UPLOADED PHOTO AS THE IDENTITY REFERENCE
 
@@ -19,8 +20,17 @@ prompt: |-
 
   FINAL RESULT: Make the finished image look like a genuine collectible figure photographed directly after being packaged for a store shelf or online product listing. Preserve the subject's recognizable identity while convincingly translating them into a physical collectible figure. No real brand names, trademarked logos, copyrighted characters, watermarks, random text, or unnecessary design elements.
 image: /uploads/ChatGPT Image Aug 14, 2026, 10_49_13 PM.png
-category: general
-tool: ChatGPT (GPT Image)
+category: image-editing
+subject: general
+tool: ChatGPT
+tags:
+  - "figurine"
+  - "action figure"
+  - "toy"
+  - "3d"
+  - "chatgpt"
+  - "trend"
+trending: false
 date: 2026-08-14T22:58
 ---
 

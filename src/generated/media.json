@@ -1,0 +1,121 @@
+{
+  "70s-y2k-fisheye-bathroom-portrait": {
+    "width": 1089,
+    "height": 1444,
+    "pin": true,
+    "pinWidth": 1000,
+    "pinHeight": 1500
+  },
+  "90s-yearbook-portrait": {
+    "width": 1073,
+    "height": 1600,
+    "pin": true,
+    "pinWidth": 1000,
+    "pinHeight": 1500
+  },
+  "accidental-iphone-snapshot": {
+    "width": 1086,
+    "height": 1448,
+    "pin": true,
+    "pinWidth": 1000,
+    "pinHeight": 1500
+  },
+  "black-white-high-fashion-magazine-cover": {
+    "width": 1122,
+    "height": 1402,
+    "pin": true,
+    "pinWidth": 1000,
+    "pinHeight": 1500
+  },
+  "collectible-action-figure--blister-pack-edition": {
+    "width": 1024,
+    "height": 1536,
+    "pin": true,
+    "pinWidth": 1000,
+    "pinHeight": 1500
+  },
+  "daisy-field-cinematic-portrait": {
+    "width": 1023,
+    "height": 1537,
+    "pin": true,
+    "pinWidth": 1000,
+    "pinHeight": 1500
+  },
+  "desk-collectible-figurine-with-box": {
+    "width": 1073,
+    "height": 1600,
+    "pin": true,
+    "pinWidth": 1000,
+    "pinHeight": 1500
+  },
+  "golden-hour-café-motion-portrait": {
+    "width": 1122,
+    "height": 1402,
+    "pin": true,
+    "pinWidth": 1000,
+    "pinHeight": 1500
+  },
+  "hand-painted-anime-countryside": {
+    "width": 1600,
+    "height": 1073,
+    "pin": true,
+    "pinWidth": 1000,
+    "pinHeight": 1500
+  },
+  "levitating-sneaker-splash-shot": {
+    "width": 1600,
+    "height": 1600,
+    "pin": true,
+    "pinWidth": 1000,
+    "pinHeight": 1500
+  },
+  "neon-rain-cyberpunk-street": {
+    "width": 1073,
+    "height": 1600,
+    "pin": true,
+    "pinWidth": 1000,
+    "pinHeight": 1500
+  },
+  "old-money-porsche-editorial": {
+    "width": 1086,
+    "height": 1448,
+    "pin": true,
+    "pinWidth": 1000,
+    "pinHeight": 1500
+  },
+  "polaroid-with-my-younger-self": {
+    "width": 1073,
+    "height": 1600,
+    "pin": true,
+    "pinWidth": 1000,
+    "pinHeight": 1500
+  },
+  "prism-light-high-fashion-portrait": {
+    "width": 1076,
+    "height": 1461,
+    "pin": true,
+    "pinWidth": 1000,
+    "pinHeight": 1500
+  },
+  "red-gradient-panning-silhouette": {
+    "width": 1448,
+    "height": 1086,
+    "pin": true,
+    "pinWidth": 1000,
+    "pinHeight": 1500
+  },
+  "red-noir-cinematic-portrait": {
+    "width": 1194,
+    "height": 1317,
+    "pin": true,
+    "pinWidth": 1000,
+    "pinHeight": 1500
+  },
+  "stillness-in-the-city": {
+    "width": 1023,
+    "height": 1537,
+    "pin": true,
+    "pinWidth": 1000,
+    "pinHeight": 1500
+  }
+}

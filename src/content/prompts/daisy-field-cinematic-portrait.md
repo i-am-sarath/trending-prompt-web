@@ -1,5 +1,6 @@
 ---
 title: Daisy Field Cinematic Portrait
+description: "Place an uploaded portrait in a cinematic field of white daisies."
 prompt: |-
   CINEMATIC FIELD PORTRAIT — USE THE UPLOADED PHOTO AS THE SUBJECT REFERENCE
 
@@ -21,7 +22,14 @@ prompt: |-
 
   FINAL RESULT: The photograph should feel like an authentic cinematic fashion portrait captured in a real flower field, balancing the rugged vintage styling with the soft, delicate surroundings. Avoid excessive retouching, artificial-looking flowers, distorted anatomy, text, logos, or watermarks.
 image: /uploads/ChatGPT Image Aug 11, 2026, 04_18_42 PM.png
-category: general
-tool: ''
+category: image-editing
+subject: general
+tool: ChatGPT
+tags:
+  - "portrait"
+  - "fashion"
+  - "photography"
+  - "chatgpt"
+trending: false
 date: 2026-08-11T16:19
 ---

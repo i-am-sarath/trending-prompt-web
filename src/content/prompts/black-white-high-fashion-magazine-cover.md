@@ -1,5 +1,6 @@
 ---
 title: Black & White High-Fashion Magazine Cover
+description: "Turn an uploaded portrait into a black-and-white high-fashion magazine cover."
 prompt: |-
   BLACK-AND-WHITE FASHION MAGAZINE EDITORIAL — USE THE UPLOADED PHOTO AS THE SUBJECT REFERENCE
 
@@ -17,7 +18,14 @@ prompt: |-
 
   FINAL LOOK: Sophisticated, minimalist, luxurious, and cinematic, resembling a professionally photographed fashion editorial cover. Keep typography clean and correctly spelled, with no additional distracting elements, distorted anatomy, excessive retouching, or watermarks.
 image: /uploads/ChatGPT Image Aug 11, 2026, 04_06_33 PM.png
-category: portrait
-tool: ''
+category: image-editing
+subject: portrait
+tool: ChatGPT
+tags:
+  - "portrait"
+  - "fashion"
+  - "photography"
+  - "chatgpt"
+trending: false
 date: 2026-08-11T16:06
 ---

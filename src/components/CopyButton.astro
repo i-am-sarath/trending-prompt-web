@@ -1,29 +1,36 @@
 ---
 interface Props {
   text: string;
+  label?: string;
+  compact?: boolean;
 }
 
-const { text } = Astro.props;
+const { text, label = 'Copy prompt', compact = false } = Astro.props;
 ---
-<button class="btn btn--copy" data-copy={text}>
+<button class:list={['btn', 'btn--copy', compact && 'btn--small']} type="button" data-copy={text}>
   <svg class="btn__icon" width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
     <rect x="5.25" y="5.25" width="9" height="9" rx="1.6" stroke="currentColor" stroke-width="1.4" />
     <path d="M10.75 2.75H3.4c-.36 0-.65.29-.65.65v7.35" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" />
   </svg>
-  <span class="btn__label" aria-live="polite">Copy prompt</span>
+  <span class="btn__label" aria-live="polite">{label}</span>
 </button>
 
 <script>
   document.querySelectorAll<HTMLButtonElement>('.btn--copy').forEach((btn) => {
+    if (btn.dataset.bound === 'true') return;
+    btn.dataset.bound = 'true';
     const label = btn.querySelector<HTMLElement>('.btn__label');
     const idle = label?.textContent ?? 'Copy prompt';
     let reset: number | undefined;
 
-    /** Clipboard API needs a secure context; fall back for http:// and file://. */
     const write = async (value: string) => {
-      if (navigator.clipboard && window.isSecureContext) {
-        await navigator.clipboard.writeText(value);
-        return;
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(value);
+          return;
+        }
+      } catch {
+        // Permission can be denied even on https. Fall through to the textarea path.
       }
       const field = document.createElement('textarea');
       field.value = value;
@@ -36,14 +43,16 @@ const { text } = Astro.props;
       if (!ok) throw new Error('copy rejected');
     };
 
-    btn.addEventListener('click', async () => {
+    btn.addEventListener('click', async (event) => {
+      event.preventDefault();
+      event.stopPropagation();
       let state = 'done';
       try {
         await write(btn.dataset.copy ?? '');
       } catch {
         state = 'failed';
       }
-      if (label) label.textContent = state === 'done' ? 'Copied' : 'Press Ctrl+C to copy';
+      if (label) label.textContent = state === 'done' ? 'Copied' : 'Press Ctrl+C';
       btn.dataset.state = state;
       window.clearTimeout(reset);
       reset = window.setTimeout(() => {

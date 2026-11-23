@@ -1,5 +1,6 @@
 ---
 title: Desk Collectible Figurine With Box
+description: "Turn an uploaded photo into a 1/7 scale desk figurine shown with its retail box."
 prompt: |-
   1/7 SCALE COLLECTIBLE FIGURINE ON A DESK — USE THE UPLOADED PHOTO AS THE IDENTITY REFERENCE
 
@@ -17,8 +18,20 @@ prompt: |-
 
   FINAL RESULT: The image should look like a genuine photo taken by a collector of a newly released figure on their workspace. No real brand names, trademarked logos, copyrighted characters, watermarks, or random text.
 image: /uploads/desk-collectible-figurine-with-box.jpg
-category: product
+category: image-editing
+subject: product
 tool: Gemini
+tags:
+  - "figurine"
+  - "action figure"
+  - "toy"
+  - "3d"
+  - "product"
+  - "gemini"
+  - "chatgpt"
+  - "trend"
+  - "trending"
+trending: true
 date: 2026-11-12T10:10
 ---
 

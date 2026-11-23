@@ -28,26 +28,24 @@ const schema = {
     <div class="page__body prose">
       <h2>What gets published</h2>
       <p>
-        One prompt a day. Each entry is a single generated image, the exact text that produced it,
-        the tool it was made in, and — where it helps — notes on which clause is doing the heavy
-        lifting and what to change for a different result. Nothing is paraphrased. The text on the
-        page is the text that went into the model, punctuation and parameters included, so you can
-        paste it and get something recognisably similar.
+        Each entry is the example image, the exact text that produced it, the tool it was made in,
+        and — where it helps — notes on which clause is doing the heavy lifting and what to change.
+        Nothing is paraphrased. The text on the page is the text that went into the model, punctuation
+        and parameters included, so you can paste it and get something recognisably similar.
       </p>
       <p>
-        Prompts are grouped by subject rather than by tool, because the useful part transfers.
-        A lighting clause that works for a portrait in one model usually works in another; the
-        parameters after the comma are the part you swap.
+        Prompts are grouped by job and by tool: image generation, image editing, ChatGPT, Claude,
+        Grok, Gemini, Midjourney, and other agents. Older topic archives such as portrait and product
+        are still there, because a lighting clause that works in one model usually works in another.
       </p>
 
       <h2>How each prompt is tested</h2>
       <p>
-        A prompt does not go up until it has been run at least three times from a clean session,
-        with no reference image and no prior context, to make sure the result is a property of the
-        words rather than of a lucky seed. If two of three runs miss badly, the prompt gets rewritten
-        or dropped. Where a result depends on a specific model version or parameter, that is stated
-        on the entry — a prompt that only works on one release with one flag is a footnote, not a
-        recipe.
+        A prompt does not go up until it has been run more than once and the picture on the page is
+        the actual output. Image-editing prompts are run with a reference photo. Image-generation
+        prompts are run from a clean session with no reference image. If the result only shows up
+        on a lucky seed, the prompt gets rewritten or dropped. Where a result depends on a specific
+        model version or parameter, that is stated on the entry.
       </p>
       <p>
         Images are the raw output of the tool named on the entry. When something has been upscaled
@@ -74,12 +72,10 @@ const schema = {
       </p>
 
       <h2>Who runs this</h2>
-      <!-- TODO: replace with your name and a sentence of background. Readers and ad reviewers
-           both look for a real person here; it is the single highest-value edit on this page. -->
       <p>
-        trendingprompt is an independent project run by a single editor, not a company or a content
-        farm. There is no team, no syndication, and no automated posting: every entry and every
-        guide is written and checked by hand before it goes live.
+        trendingprompt is an independent project run by Sarath, not a company or a content farm.
+        There is no team and no syndication. New prompts and guides are added as files in the site
+        repository and checked before they go live.
       </p>
 
       <h2>How the site pays for itself</h2>

@@ -1,24 +1,82 @@
 ---
-import { excerpt, formatDate } from '../lib/prompt';
+import type { PromptEntry } from '../lib/content';
+import { absolute } from '../lib/site';
+import { HUBS, categoryLabel, inHub, tagSlug, toolHub } from '../lib/taxonomy';
+import { mediaUrl, pinUrl } from '../lib/images';
+import { formatDate, isoDate } from '../lib/prompt';
+import CopyButton from './CopyButton.astro';
+import PinterestSave from './PinterestSave.astro';
 
 interface Props {
-  title: string;
-  image: string;
-  category: string;
-  slug: string;
-  prompt: string;
-  date: Date;
+  prompt: PromptEntry;
+  eager?: boolean;
+  fresh?: boolean;
 }
 
-const { title, image, category, slug, prompt, date } = Astro.props;
+const { prompt, eager = false, fresh = false } = Astro.props;
+const { title, description, category, tool, subject, tags, date, trending, prompt: text } = prompt.data;
+const hub = categoryLabel(category);
+const toolSlug = toolHub(tool);
+const pageUrl = absolute(`/prompts/${prompt.slug}/`);
+const showPin = category === 'image-editing' || Boolean(prompt.data.pinImage);
+const pinMedia = absolute(prompt.data.pinImage ?? pinUrl(prompt.slug));
+const pinText = `${title}. ${description}`.slice(0, 500);
+const search = [title, description, text, tool, hub, subject, ...tags].join(' ').toLowerCase();
+const membership = HUBS.filter((item) => inHub(prompt.data, item.slug))
+  .map((item) => item.slug)
+  .join(' ');
 ---
-<a href={`/prompts/${slug}`} class="plate">
-  <span class="plate__frame">
-    <img class="plate__img" src={image} alt={title} loading="lazy" decoding="async" />
-    <span class="plate__peek">{excerpt(prompt, 130)}</span>
-  </span>
-  <span class="plate__caption">
-    <span class="plate__title">{title}</span>
-    <span class="plate__meta">{category} · {formatDate(date)}</span>
-  </span>
-</a>
+<article
+  class="card"
+  data-card
+  data-search={search}
+  data-tool={tool}
+  data-hub={category}
+  data-hubs={membership}
+  data-subject={subject ?? ''}
+  data-tags={tags.map((tag) => tagSlug(tag)).join(' ')}
+>
+  <a class="card__link" href={`/prompts/${prompt.slug}/`}>
+    <span class="card__media">
+      <img
+        class="card__img"
+        src={mediaUrl(prompt.slug)}
+        alt=""
+        width="800"
+        height="1000"
+        loading={eager ? 'eager' : 'lazy'}
+        decoding="async"
+        fetchpriority={eager ? 'high' : undefined}
+      />
+      {(fresh || trending) && (
+        <span class="card__badges">
+          {fresh && <span class="badge badge--new">New</span>}
+          {trending && <span class="badge">Trending</span>}
+        </span>
+      )}
+    </span>
+    <h3 class="card__title">{title}</h3>
+  </a>
+  <p class="card__dek">{description}</p>
+  <p class="card__meta">
+    <a href={`/category/${category}`}>{hub}</a>
+    {toolSlug && (
+      <>
+        <span aria-hidden="true">·</span>
+        <a href={`/category/${toolSlug}`}>{tool}</a>
+      </>
+    )}
+    {subject && (
+      <>
+        <span aria-hidden="true">·</span>
+        <a href={`/category/${subject}`}>{subject}</a>
+      </>
+    )}
+    <span aria-hidden="true">·</span>
+    <time datetime={isoDate(date)}>{formatDate(date)}</time>
+  </p>
+  <div class="card__actions">
+    <CopyButton text={text} label="Copy" compact />
+    {showPin && <PinterestSave pageUrl={pageUrl} mediaUrl={pinMedia} description={pinText} compact />}
+  </div>
+</article>

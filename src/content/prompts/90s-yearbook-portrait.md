@@ -1,5 +1,6 @@
 ---
 title: 90s Yearbook Portrait
+description: "Turn a selfie into a believable 1990s American high-school yearbook portrait."
 prompt: |-
   1990s SCHOOL YEARBOOK PORTRAIT — USE THE UPLOADED PHOTO AS THE SUBJECT REFERENCE
 
@@ -17,8 +18,19 @@ prompt: |-
 
   FINAL RESULT: The portrait should look like a real scan from a 1990s yearbook page. Do not add text, names, page layouts, borders, logos, or watermarks, and avoid modern smartphone sharpness or beauty filters.
 image: /uploads/90s-yearbook-portrait.jpg
-category: portrait
+category: image-editing
+subject: portrait
 tool: Gemini
+tags:
+  - "yearbook"
+  - "90s"
+  - "retro"
+  - "portrait"
+  - "gemini"
+  - "chatgpt"
+  - "trend"
+  - "trending"
+trending: true
 date: 2026-11-12T10:20
 ---
 

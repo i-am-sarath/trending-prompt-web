@@ -1,5 +1,6 @@
 ---
 title: Prism Light High-Fashion Portrait
+description: "Restyle an uploaded portrait with prism light as a high-fashion editorial."
 prompt: |-
   CINEMATIC HIGH-FASHION PORTRAIT — USE THE UPLOADED PHOTO AS THE SUBJECT REFERENCE
 
@@ -15,7 +16,15 @@ prompt: |-
 
   FINAL LOOK: The result should feel like a professionally photographed fashion editorial created with practical prism lighting effects. Keep the effect sophisticated and photorealistic rather than overly digital or fantastical. Preserve natural anatomy and avoid excessive skin smoothing, artificial facial changes, text, logos, or watermarks.
 image: /uploads/ChatGPT Image Aug 11, 2026, 02_21_37 PM.png
-category: portrait
-tool: ''
+category: image-editing
+subject: portrait
+tool: ChatGPT
+tags:
+  - "portrait"
+  - "fashion"
+  - "photography"
+  - "lighting"
+  - "chatgpt"
+trending: false
 date: 2026-08-11T14:22
 ---

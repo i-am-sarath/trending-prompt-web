@@ -1,5 +1,6 @@
 ---
 title: Levitating Sneaker Splash Shot
+description: "Turn an uploaded sneaker photo into a levitating product splash shot without changing the shoe."
 prompt: |-
   HIGH-END FLOATING PRODUCT ADVERTISEMENT — USE THE UPLOADED PHOTO AS THE PRODUCT REFERENCE
 
@@ -17,8 +18,16 @@ prompt: |-
 
   FINAL RESULT: A polished commercial hero image ready for an e-commerce banner or social ad. No added text, slogans, brand logos that are not already on the product, watermarks, or extra shoes.
 image: /uploads/levitating-sneaker-splash-shot.jpg
-category: product
+category: image-editing
+subject: product
 tool: Gemini
+tags:
+  - "product photography"
+  - "product"
+  - "gemini"
+  - "trend"
+  - "trending"
+trending: true
 date: 2026-11-12T11:00
 ---
 

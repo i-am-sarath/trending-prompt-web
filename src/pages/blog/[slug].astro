@@ -1,12 +1,20 @@
 ---
-import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import PromptCard from '../../components/PromptCard.astro';
+import { promptsForPost, publishedPosts, publishedPrompts } from '../../lib/content';
 import { formatLongDate, isoDate, readingTime } from '../../lib/prompt';
-import { SITE } from '../../lib/site';
+import { absolute, SITE } from '../../lib/site';
 
 export async function getStaticPaths() {
-  const posts = (await getCollection('posts', ({ data }) => !data.draft))
-    .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+  const posts = await publishedPosts();
+  const prompts = await publishedPrompts();
+  for (const post of posts) {
+    for (const slug of post.data.relatedPrompts) {
+      if (!prompts.some((prompt) => prompt.slug === slug)) {
+        throw new Error(`Post "${post.slug}" relatedPrompts includes unknown slug "${slug}".`);
+      }
+    }
+  }
 
   return posts.map((post, i) => ({
     params: { slug: post.slug },
@@ -19,7 +27,9 @@ const { Content, headings } = await post.render();
 const sections = headings.filter((h) => h.depth === 2);
 const { title, description, date, updated, author, tags, category } = post.data;
 
-const url = `${SITE.url}/blog/${post.slug}`;
+const prompts = await publishedPrompts();
+const linkedPrompts = promptsForPost(post, prompts);
+const url = absolute(`/blog/${post.slug}`);
 const schema = [
   {
     '@context': 'https://schema.org',
@@ -39,8 +49,8 @@ const schema = [
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: SITE.url },
-      { '@type': 'ListItem', position: 2, name: 'Blog', item: `${SITE.url}/blog` },
+      { '@type': 'ListItem', position: 1, name: 'Home', item: absolute('/') },
+      { '@type': 'ListItem', position: 2, name: 'Blog', item: absolute('/blog') },
       { '@type': 'ListItem', position: 3, name: title, item: url },
     ],
   },
@@ -114,4 +124,16 @@ const schema = [
       </div>
     </div>
   </article>
+
+  {linkedPrompts.length > 0 && (
+    <section class="shell section">
+      <div class="section__head">
+        <h2 class="section__title section__title--display">Prompts from this guide</h2>
+        <a class="backlink" href="/">All prompts</a>
+      </div>
+      <div class="grid">
+        {linkedPrompts.map((prompt) => <PromptCard prompt={prompt} />)}
+      </div>
+    </section>
+  )}
 </BaseLayout>

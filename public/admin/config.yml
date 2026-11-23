@@ -1,6 +1,6 @@
 backend:
   name: github
-  repo: i-am-sarath/trending-prompt-web # <-- set this
+  repo: i-am-sarath/trending-prompt-web
   branch: main
 
 site_url: https://trendingprompt.org
@@ -17,33 +17,54 @@ collections:
     create: true
     slug: "{{slug}}"
     summary: "{{title}} — {{category}}"
-    sortable_fields: ["date", "title"]
+    sortable_fields: ["date", "title", "trending"]
     fields:
       - { label: "Title", name: "title", widget: "string" }
-      - { label: "Prompt Text", name: "prompt", widget: "text" }
-      - { label: "Image", name: "image", widget: "image" }
+      - label: "Description"
+        name: "description"
+        widget: "text"
+        hint: "One or two sentences, under 160 characters. Used as the meta description."
+      - { label: "Prompt text", name: "prompt", widget: "text" }
+      - { label: "Example image", name: "image", widget: "image" }
+      - label: "Pinterest image (optional 1000x1500)"
+        name: "pinImage"
+        widget: "image"
+        required: false
+        hint: "Leave empty for image-editing prompts. The build makes a 2:3 crop."
       - label: "Category"
         name: "category"
         widget: "select"
         options:
           [
-            "sci-fi",
-            "portrait",
-            "fantasy",
-            "product",
-            "logo",
-            "anime",
-            "general",
+            "image-generation",
+            "image-editing",
+            "chatgpt",
+            "claude",
+            "grok",
+            "gemini",
+            "midjourney",
+            "agents",
           ]
-        default: "general"
-      - { label: "Tool", name: "tool", widget: "string", required: false }
+        default: "image-editing"
+      - label: "Subject"
+        name: "subject"
+        widget: "string"
+        required: false
+        hint: "Optional topic slug such as portrait, product, anime, sci-fi. Not a hub slug. Keeps /category/<subject>/."
+      - label: "Tool"
+        name: "tool"
+        widget: "string"
+        default: "ChatGPT"
+        hint: "ChatGPT, Claude, Grok, Gemini, Midjourney, or another product name."
+      - { label: "Tags", name: "tags", widget: "list", required: false }
+      - { label: "Credit", name: "credit", widget: "string", required: false }
       - { label: "Date", name: "date", widget: "datetime" }
-      - { label: "Draft (hide until image is ready)", name: "draft", widget: "boolean", default: false, required: false }
+      - { label: "Trending", name: "trending", widget: "boolean", default: false, required: false }
+      - { label: "Draft", name: "draft", widget: "boolean", default: false, required: false }
       - label: "Notes (optional)"
         name: "body"
         widget: "markdown"
         required: false
-        hint: "Why this prompt works, which clause does what, what to swap. This is the original writing that lifts an entry above a caption — worth 150+ words."
 
   - name: "posts"
     label: "Blog"
@@ -58,18 +79,23 @@ collections:
       - label: "Description"
         name: "description"
         widget: "text"
-        hint: "One or two sentences. Used as the page meta description and the blog index summary — keep it under about 160 characters."
+        hint: "One or two sentences. Used as the meta description. Keep it near 160 characters."
       - { label: "Date", name: "date", widget: "datetime" }
       - { label: "Updated", name: "updated", widget: "datetime", required: false }
       - label: "Category"
         name: "category"
         widget: "select"
-        options: ["guides", "reference", "comparisons", "workflow", "legal"]
+        options: ["guides", "reference", "comparisons", "workflow", "legal", "trends"]
         default: "guides"
       - { label: "Tags", name: "tags", widget: "list", required: false }
       - label: "Author"
         name: "author"
         widget: "string"
         default: "The trendingprompt desk"
+      - label: "Related prompt slugs"
+        name: "relatedPrompts"
+        widget: "list"
+        required: false
+        hint: "Filename of a prompt without .md. A slug that does not exist fails the build."
       - { label: "Draft", name: "draft", widget: "boolean", default: false }
       - { label: "Body", name: "body", widget: "markdown" }

@@ -1,5 +1,6 @@
 ---
 title: 70s Y2K Fisheye Bathroom Portrait
+description: "Restyle an uploaded photo as a 1970s and Y2K fisheye bathroom editorial."
 prompt: |-
   ULTRA-REALISTIC EDITORIAL PORTRAIT — USE THE UPLOADED PHOTO AS THE SUBJECT REFERENCE
   Create a cinematic, candid editorial portrait inspired by a 1970s aesthetic blended with Y2K indie-sleaze photography. Preserve the subject’s recognizable facial identity and natural features from the uploaded image while transforming the overall styling and environment.
@@ -10,7 +11,14 @@ prompt: |-
   CAMERA & COMPOSITION: Shot with an 8mm circular fisheye lens from an extreme bird’s-eye, top-down perspective. The subject holds a giant teal ceramic coffee mug extremely close to the camera lens, creating dramatic fisheye perspective and exaggerated foreground distortion. The mug dominates the foreground while the subject’s head appears dramatically enlarged and the body progressively shrinks toward the bottom of the frame.
   IMAGE QUALITY: Ultra-realistic photographic detail, candid raw-snapshot feeling, heavy vintage film grain, high contrast, subtle analog imperfections, realistic skin texture, slight optical distortion, authentic 70s/Y2K photographic character. Avoid overly polished beauty-retouching or artificial-looking perfection.
 image: /uploads/ChatGPT Image Aug 11, 2026, 01_40_15 PM.png
-category: general
-tool: GPT
+category: image-editing
+subject: general
+tool: ChatGPT
+tags:
+  - "portrait"
+  - "retro"
+  - "fashion"
+  - "chatgpt"
+trending: false
 date: 2026-08-11T13:44
 ---

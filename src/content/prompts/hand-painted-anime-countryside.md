@@ -1,5 +1,6 @@
 ---
 title: Hand-Painted Anime Countryside
+description: "Redraw an uploaded photo as a hand-painted anime film frame while keeping the person recognisable."
 prompt: |-
   HAND-PAINTED ANIME FILM FRAME — USE THE UPLOADED PHOTO AS THE SUBJECT REFERENCE
 
@@ -19,8 +20,16 @@ prompt: |-
 
   FINAL RESULT: A calm, beautiful animation still that feels hand-crafted and emotionally warm. No text, subtitles, logos, watermarks, 3D rendering, or photorealistic textures.
 image: /uploads/hand-painted-anime-countryside.jpg
-category: anime
+category: image-editing
+subject: anime
 tool: Gemini
+tags:
+  - "anime"
+  - "illustration"
+  - "gemini"
+  - "trend"
+  - "trending"
+trending: true
 date: 2026-11-12T10:30
 ---
 

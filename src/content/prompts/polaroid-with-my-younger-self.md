@@ -1,5 +1,6 @@
 ---
 title: Polaroid With My Younger Self
+description: "Make an instant-film photo of you hugging your younger self, using two reference pictures."
 prompt: |-
   INSTANT-FILM DOUBLE PORTRAIT — USE BOTH UPLOADED PHOTOS AS SUBJECT REFERENCES (ONE CURRENT PHOTO, ONE CHILDHOOD PHOTO)
 
@@ -17,8 +18,19 @@ prompt: |-
 
   FINAL RESULT: The photograph should feel like a real instant print someone found in a shoebox — tender, slightly imperfect, and emotionally authentic. Avoid any text written on the border, artificial-looking skin, mismatched faces, distorted hands, logos, or watermarks.
 image: /uploads/polaroid-with-my-younger-self.jpg
-category: portrait
+category: image-editing
+subject: portrait
 tool: Gemini
+tags:
+  - "younger self"
+  - "polaroid"
+  - "photo editing"
+  - "portrait"
+  - "gemini"
+  - "chatgpt"
+  - "trend"
+  - "trending"
+trending: true
 date: 2026-11-12T10:00
 ---
 

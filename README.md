@@ -82,22 +82,9 @@ the site makes no third-party requests.
 To re-skin, edit the `:root` block at the top of `src/styles/global.css` — the palette
 is nine tokens and nothing hardcodes a colour outside them.
 
-### Adding a prompt by hand
+### Adding a prompt or a guide
 
-Create `src/content/prompts/my-slug.md`:
-
-```md
----
-title: "Cyberpunk City at Night"
-prompt: "A sprawling cyberpunk megacity at night, neon signs..."
-image: "/uploads/cyberpunk-city.jpg"
-category: "sci-fi"
-tool: "Midjourney"
-date: 2026-01-15
----
-```
-
-The filename is the URL slug: `/prompts/my-slug/`. `category` must be URL-safe (it becomes `/category/<value>/`). Everything after the frontmatter is optional body text and is currently not rendered.
+Follow [CONTENT_GUIDE.md](CONTENT_GUIDE.md). A prompt is one markdown file in `src/content/prompts/`, a guide is one markdown file in `src/content/posts/`, and a bad file fails `npm run build`. The filename is the URL slug. `category` is a hub (`image-generation`, `image-editing`, `chatgpt`, `claude`, `grok`, `gemini`, `midjourney`, `agents`). Optional `subject` keeps the older topic URLs such as `/category/portrait/`.
 
 ---
 
@@ -204,4 +191,4 @@ images once you have real prompts, and replace `og-default.jpg` with a real card
 
 ## Out of scope (v1)
 
-Visitor accounts / submissions · search (later: client-side over a generated JSON index) · Cloudflare R2 image storage (migrate when `public/uploads` gets large) · comments, likes, ratings.
+Visitor accounts / submissions · Cloudflare R2 image storage (migrate when `public/uploads` gets large) · comments, likes, ratings. Search is client-side on the built pages.
