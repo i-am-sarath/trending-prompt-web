@@ -81,12 +81,21 @@ A prompt is also listed on its tool page. `tool: Gemini` with `category: image-e
 4. Prefer JPEG or WebP. A published prompt whose image file is missing fails the build. Drafts may point at a file you have not uploaded yet.
 5. Do not hotlink an external URL.
 
-The build makes two derivatives and the pages use those, not the original file:
+The pages do not serve the original file. They use two derivatives, which you generate and commit:
 
-- `/media/<slug>.jpg` — display image, longest side at most 1600px
-- `/pins/<slug>.jpg` — 1000×1500 (2:3) cover crop, for image-editing prompts
+- `public/media/<slug>.jpg` — display image, longest side at most 1600px, served at `/media/<slug>.jpg`
+- `public/pins/<slug>.jpg` — 1000×1500 (2:3) cover crop for image-editing prompts, served at `/pins/<slug>.jpg`
 
-Pinterest reads the 2:3 image from the Open Graph tags. The prompt page shows the uncropped example and a Save button that pins the tall image. The crop is centred, with a bias toward the subject. If a face or product gets cut off, add your own file at 1000×1500 and set:
+Generate them after the markdown and the upload are in place:
+
+```bash
+npm install --no-save sharp
+node scripts/generate-images.mjs
+```
+
+Commit `public/media`, `public/pins`, and `src/generated/media.json` with the prompt. The site build checks that those files exist for every published prompt. It does not run the image library itself, so the Cloudflare deploy stays a plain `npm run build`.
+
+Pinterest reads the 2:3 image from the Open Graph tags. The prompt page shows the display image and a Save button that pins the tall image. The crop is centred, with a bias toward the subject. If a face or product gets cut off, add your own file at 1000×1500 and set:
 
 ```yaml
 pinImage: /uploads/red-noir-portrait-pin.jpg
@@ -155,6 +164,6 @@ npm install
 npm run build
 ```
 
-The build validates every prompt and post, including drafts. It fails if a category is not in the list, a description is missing or the wrong length, a published image path does not exist, or a `relatedPrompts` slug does not match a file.
+The build validates every prompt and post, including drafts. It fails if a category is not in the list, a description is missing or the wrong length, a published image path does not exist, the display or Pinterest derivative was not generated, or a `relatedPrompts` slug does not match a file.
 
 `npm run dev` serves the site at `http://localhost:4321`. Search works in the browser: it filters the cards on the page and does not need a server.

@@ -1,5 +1,5 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
-import { imageExists } from './images';
+import { mediaRecord, publicFileExists } from './images';
 import { inHub, isHubSlug, tagSlug, type HubSlug } from './taxonomy';
 
 export type PromptEntry = CollectionEntry<'prompts'>;
@@ -14,12 +14,22 @@ export async function allPrompts(): Promise<PromptEntry[]> {
 export async function publishedPrompts(): Promise<PromptEntry[]> {
   const prompts = (await allPrompts()).filter((prompt) => !prompt.data.draft);
   for (const prompt of prompts) {
-    if (!imageExists(prompt.data.image)) {
+    if (!publicFileExists(prompt.data.image)) {
       throw new Error(
         `Published prompt "${prompt.slug}" is missing its image file (${prompt.data.image}). Add the file under public/ or set draft: true.`
       );
     }
-    if (prompt.data.pinImage && !imageExists(prompt.data.pinImage)) {
+    if (!publicFileExists(`/media/${prompt.slug}.jpg`) || !mediaRecord(prompt.slug)) {
+      throw new Error(
+        `Published prompt "${prompt.slug}" has no display image at public/media/${prompt.slug}.jpg. Run: npm install --no-save sharp && node scripts/generate-images.mjs`
+      );
+    }
+    if (prompt.data.category === 'image-editing' && !prompt.data.pinImage && !publicFileExists(`/pins/${prompt.slug}.jpg`)) {
+      throw new Error(
+        `Published prompt "${prompt.slug}" has no Pinterest image at public/pins/${prompt.slug}.jpg. Run node scripts/generate-images.mjs.`
+      );
+    }
+    if (prompt.data.pinImage && !publicFileExists(prompt.data.pinImage)) {
       throw new Error(
         `Published prompt "${prompt.slug}" points pinImage at ${prompt.data.pinImage}, and that file is not in public/.`
       );
@@ -115,11 +125,6 @@ export function promptsForPost(post: PostEntry, prompts: PromptEntry[], limit = 
     )
     .slice(0, limit)
     .map((row) => row.prompt);
-}
-
-/** Image-editing prompts get an automatic 2:3 pin unless the file sets pinImage. */
-export function usesGeneratedPin(data: { category: string; pinImage?: string }): boolean {
-  return data.category === 'image-editing' && !data.pinImage;
 }
 
 export function tagIndex(prompts: PromptEntry[]) {

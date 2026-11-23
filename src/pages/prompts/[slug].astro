@@ -3,8 +3,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import PromptCard from '../../components/PromptCard.astro';
 import PromptSpecimen from '../../components/PromptSpecimen.astro';
 import PinterestSave from '../../components/PinterestSave.astro';
-import { publishedPosts, publishedPrompts, relatedPosts, relatedPrompts, subjectsOf, usesGeneratedPin } from '../../lib/content';
-import { displaySize, mediaUrl, orientedSize, PIN_SIZE, pinUrl } from '../../lib/images';
+import { publishedPosts, publishedPrompts, relatedPosts, relatedPrompts, subjectsOf } from '../../lib/content';
+import { mediaRecord, mediaUrl, pinUrl } from '../../lib/images';
 import { excerpt, formatDate, isoDate } from '../../lib/prompt';
 import { absolute, SITE } from '../../lib/site';
 import { categoryLabel, tagHref, tagSlug, toolHub } from '../../lib/taxonomy';
@@ -20,7 +20,7 @@ const posts = await publishedPosts();
 const entry = prompts.find((prompt) => prompt.slug === slug);
 if (!entry) throw new Error(`Missing prompt ${slug}`);
 
-const { title, prompt, description, image, category, tool, subject, tags, date, credit, trending, pinImage } = entry.data;
+const { title, prompt, description, category, tool, subject, tags, date, credit, trending, pinImage } = entry.data;
 const { Content } = await entry.render();
 const hasNotes = entry.body.trim().length > 0;
 const related = relatedPrompts(entry, prompts);
@@ -29,21 +29,12 @@ const subjects = subjectsOf(prompts);
 const hubLabel = categoryLabel(category);
 const toolSlug = toolHub(tool);
 const pageUrl = absolute(`/prompts/${entry.slug}/`);
-const display = await displaySize(image);
-const showPin = category === 'image-editing' || Boolean(pinImage);
-const pinSrc = pinImage ?? (usesGeneratedPin(entry.data) ? pinUrl(entry.slug) : undefined);
-let ogWidth = display.width;
-let ogHeight = display.height;
-if (showPin && pinSrc) {
-  if (pinImage) {
-    const custom = await orientedSize(pinImage);
-    ogWidth = custom.width;
-    ogHeight = custom.height;
-  } else {
-    ogWidth = PIN_SIZE.width;
-    ogHeight = PIN_SIZE.height;
-  }
-}
+const display = mediaRecord(entry.slug);
+if (!display) throw new Error(`No generated image for ${entry.slug}. Run node scripts/generate-images.mjs.`);
+const showPin = Boolean(pinImage) || display.pin;
+const pinSrc = pinImage ?? (display.pin ? pinUrl(entry.slug) : undefined);
+const ogWidth = showPin ? (display.pinWidth ?? display.width) : display.width;
+const ogHeight = showPin ? (display.pinHeight ?? display.height) : display.height;
 const pinText = `${title}. ${description} ${excerpt(prompt, 160)}`.slice(0, 500);
 const fresh = prompts[0] ? isoDate(date) === isoDate(prompts[0].data.date) : false;
 
